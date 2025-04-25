@@ -10,6 +10,9 @@ int main() {
     const float center_x = 400;
     const float center_y = 300;
     const float move_radius = 100;
+    float x3 = 25;
+    float y3 = 50;
+    float font_size = 1;
 
     while (true) {
       drawer.clear();
@@ -27,6 +30,9 @@ int main() {
       drawer.draw_particle(x1, y1, radius, cv::Scalar(0, 255, 0));
       drawer.draw_particle(x2, y2, radius, cv::Scalar(0, 255, 0));
 
+      // パラメータ表示
+      drawer.show_param(x3, y3, font_size, "particle 1: ("+ std::to_string(x1) + "," + std::to_string(y1) + ")");
+      drawer.show_param(x3, y3+60, font_size, "particle 2: ("+ std::to_string(x2) + "," + std::to_string(y2) + ")");
       drawer.show("PF-model");
 
       angle += 0.05;
