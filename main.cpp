@@ -12,7 +12,7 @@ int main() {
     const float move_radius = 100;
     float x3 = 25;
     float y3 = 50;
-    float font_size = 1;
+    float font_size = 0.6;
     int time_step = 0;
 
     while (true) {
@@ -26,15 +26,17 @@ int main() {
 
       // ファイバー（赤）
       drawer.draw_fiber(x1, y1, x2, y2, fiber_thickness, cv::Scalar(0, 0, 255));
+      // 長さ
+      float fiber_length = std::sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
 
       // 粒子（緑）
       drawer.draw_particle(x1, y1, radius, cv::Scalar(0, 255, 0));
       drawer.draw_particle(x2, y2, radius, cv::Scalar(0, 255, 0));
 
       // パラメータ表示
-      drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step));
-      drawer.show_param(x3, y3+60, font_size, "particle 1: ("+ std::to_string(x1) + "," + std::to_string(y1) + ")");
-      drawer.show_param(x3, y3+120, font_size, "particle 2: ("+ std::to_string(x2) + "," + std::to_string(y2) + ")");
+      drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step) + "      fiber_length: "+ std::to_string(fiber_length));
+      drawer.show_param(x3, y3+40, font_size, "particle 1: ("+ std::to_string(x1) + "," + std::to_string(y1) + ")");
+      drawer.show_param(x3, y3+80, font_size, "particle 2: ("+ std::to_string(x2) + "," + std::to_string(y2) + ")");
       drawer.show("PF-model");
 
       angle += 0.05;

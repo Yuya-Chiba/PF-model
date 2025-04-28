@@ -1,5 +1,5 @@
-#ifndef DRAWER_HPP
-#define DRAWER_HPP
+#ifndef DRAW_HPP
+#define DRAW_HPP
 
 #include <opencv2/opencv.hpp>
 
