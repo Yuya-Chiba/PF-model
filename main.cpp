@@ -13,6 +13,7 @@ int main() {
     float x3 = 25;
     float y3 = 50;
     float font_size = 1;
+    int time_step = 0;
 
     while (true) {
       drawer.clear();
@@ -31,11 +32,13 @@ int main() {
       drawer.draw_particle(x2, y2, radius, cv::Scalar(0, 255, 0));
 
       // パラメータ表示
-      drawer.show_param(x3, y3, font_size, "particle 1: ("+ std::to_string(x1) + "," + std::to_string(y1) + ")");
-      drawer.show_param(x3, y3+60, font_size, "particle 2: ("+ std::to_string(x2) + "," + std::to_string(y2) + ")");
+      drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step));
+      drawer.show_param(x3, y3+60, font_size, "particle 1: ("+ std::to_string(x1) + "," + std::to_string(y1) + ")");
+      drawer.show_param(x3, y3+120, font_size, "particle 2: ("+ std::to_string(x2) + "," + std::to_string(y2) + ")");
       drawer.show("PF-model");
 
       angle += 0.05;
+      time_step += 1;
       if (cv::waitKey(30) == 27) break; //window閉じたいときはescキー
     }
 
