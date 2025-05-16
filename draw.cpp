@@ -2,11 +2,11 @@
 #include "particle.hpp"
 
 Drawer::Drawer(int w, int h) : width(w), height(h) {
-  canvas = cv::Mat::zeros(height, width, CV_8UC3);
+  canvas = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
 }
 
 void Drawer::clear() {
-  canvas = cv::Mat::zeros(height, width, CV_8UC3);
+  canvas = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
 }
 
 void Drawer::draw_particle(Particle& p, const cv::Scalar& color) {
@@ -18,7 +18,7 @@ void Drawer::draw_fiber(double x1, double y1, double x2, double y2, double thick
 }
 
 void Drawer::show_param(double x1, double y1, double size, std::string str) {
-  cv::putText(canvas, str, cv::Point(x1,y1), cv::FONT_HERSHEY_SIMPLEX, size, cv::Scalar(255,255,255), 1.5);
+  cv::putText(canvas, str, cv::Point(x1,y1), cv::FONT_HERSHEY_SIMPLEX, size, cv::Scalar(0,0,0), 1.5);
 }
 
 void Drawer::show(const std::string& window_name, int delay) {
