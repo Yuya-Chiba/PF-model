@@ -1,11 +1,15 @@
 #include "draw.hpp"
 #include "particle.hpp"
+#include "fiber.hpp"
 #include <cmath>
 
 int main() {
     Drawer drawer;
 
     Particle p, q;
+    Fiber f;
+    f.particle1 = &p;
+    f.particle2 = &q;
     double angle = 0.0;
     const double radius = 20;
     const double fiber_thickness = 5;
@@ -28,13 +32,13 @@ int main() {
 
       p.set_xy(x1,y1);
       q.set_xy(x2,y2);
-      p.set_radius(radius);
-      q.set_radius(radius);
+      p.radius = radius;
+      q.radius = radius;
+
+      f.thickness = fiber_thickness;
 
       // ファイバー（赤）
-      drawer.draw_fiber(x1, y1, x2, y2, fiber_thickness, cv::Scalar(0, 0, 255));
-      // 長さ
-      double fiber_length = std::sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+      drawer.draw_fiber(f, cv::Scalar(0, 0, 255));
 
       // 粒子（緑）
       drawer.draw_particle(p, cv::Scalar(0, 255, 0));
