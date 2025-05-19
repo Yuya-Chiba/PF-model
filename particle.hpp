@@ -13,11 +13,6 @@ class Particle {
 
       // メソッド
       void set_xy(double m, double n);
-      void set_radius(double radius);
-      double get_x();
-      double get_y();
-      double get_radius();
-      int get_id();
       Particle add(Particle a, Particle b);
 
   };

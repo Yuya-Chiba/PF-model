@@ -3,6 +3,7 @@
 
 #include <opencv2/opencv.hpp>
 #include "particle.hpp"
+#include "fiber.hpp"
 
 class Drawer {
 private:

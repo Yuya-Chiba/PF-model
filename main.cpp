@@ -28,8 +28,8 @@ int main() {
 
       p.set_xy(x1,y1);
       q.set_xy(x2,y2);
-      p.set_radius(radius);
-      q.set_radius(radius);
+      p.radius = radius;
+      q.radius = radius;
 
       // ファイバー（赤）
       drawer.draw_fiber(x1, y1, x2, y2, fiber_thickness, cv::Scalar(0, 0, 255));

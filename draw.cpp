@@ -1,5 +1,6 @@
 #include "draw.hpp"
 #include "particle.hpp"
+#include "fiber.hpp"
 
 Drawer::Drawer(int w, int h) : width(w), height(h) {
   canvas = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
@@ -10,7 +11,7 @@ void Drawer::clear() {
 }
 
 void Drawer::draw_particle(Particle& p, const cv::Scalar& color) {
-  cv::circle(canvas, cv::Point2f(p.get_x(), p.get_y()), p.get_radius(), color, -1, cv::LINE_AA);
+  cv::circle(canvas, cv::Point2f(p.x, p.y), p.radius, color, -1, cv::LINE_AA);
 }
 
 void Drawer::draw_fiber(double x1, double y1, double x2, double y2, double thickness, const cv::Scalar& color) {
