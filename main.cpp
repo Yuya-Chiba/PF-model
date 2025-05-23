@@ -2,14 +2,17 @@
 #include "particle.hpp"
 #include "fiber.hpp"
 #include <cmath>
+#include <vector>
 
 int main() {
     Drawer drawer;
 
-    Particle p, q;
-    Fiber f;
-    f.particle1 = &p;
-    f.particle2 = &q;
+    std::vector<Particle> particle_array(2);
+    // Particle p, q;
+    std::vector<Fiber> fiber_array(1);
+    // Fiber f;
+    fiber_array[0].particle1 = &particle_array[0];
+    fiber_array[0].particle2 = &particle_array[1];
     double angle = 0.0;
     const double radius = 20;
     const double fiber_thickness = 5;
@@ -30,19 +33,19 @@ int main() {
       double x2 = center_x + move_radius * std::cos(angle);
       double y2 = center_y;
 
-      p.set_xy(x1,y1);
-      q.set_xy(x2,y2);
-      p.radius = radius;
-      q.radius = radius;
+      particle_array[0].set_xy(x1,y1);
+      particle_array[1].set_xy(x2,y2);
+      particle_array[0].radius = radius;
+      particle_array[1].radius = radius;
 
-      f.thickness = fiber_thickness;
+      fiber_array[0].thickness = fiber_thickness;
 
       // ファイバー（赤）
-      drawer.draw_fiber(f, cv::Scalar(0, 0, 255));
+      drawer.draw_fiber(fiber_array[0], cv::Scalar(0, 0, 255));
 
       // 粒子（緑）
-      drawer.draw_particle(p, cv::Scalar(0, 255, 0));
-      drawer.draw_particle(q, cv::Scalar(0, 255, 0));
+      drawer.draw_particle(particle_array[0], cv::Scalar(0, 255, 0));
+      drawer.draw_particle(particle_array[1], cv::Scalar(0, 255, 0));
 
       // パラメータ表示
       //drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step) + "      fiber_length: "+ std::to_string(fiber_length));
