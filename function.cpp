@@ -1,8 +1,4 @@
-#include <cmath>
-#include <vector>
-#include "particle.hpp"
-#include "fiber.hpp"
-#include "vector.hpp"
+#include "function.hpp"
 
 // 各ファイバーそれぞれで力を計算し、両端の粒子に力(ベクトル)を足し合わせる
 

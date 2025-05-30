@@ -2,7 +2,7 @@
 #include "draw.hpp"
 #include "particle.hpp"
 #include "fiber.hpp"
-#include "function.cpp"
+#include "function.hpp"
 #include <cmath>
 
 int main() {

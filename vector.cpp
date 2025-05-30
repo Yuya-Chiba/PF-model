@@ -1,27 +1,27 @@
 #include "vector.hpp"
 
 // ベクトルのxy座標をset
-void set(double a, double b) {
+void Vector2D::set(double a, double b) {
   x = a;
   y = b;
 }
 
 // ベクトルの長さを求める
-double length(Vector2D p) {
-  return std::sqrt((p.x)*(p.x) + (p.y)*(p.y));
-  // return std::hypot(p.x, p.y);
+double Vector2D::length() {
+  return std::sqrt(x*x + y*y);
+  // return std::hypot(x, y);
 }
 
 // ベクトルの単位ベクトルを返す
-Vector2D normalize(Vector2D p) {
+Vector2D Vector2D::normalize(Vector2D p) {
   Vector2D q;
-  q.x = p.x / p.length;
-  q.y = p.y / p.length;
+  q.x = p.x / p.length();
+  q.y = p.y / p.length();
   return q;
 }
 
 // ベクトル和
-Vector2D add(Vector2D p, Vector2D q) {
+Vector2D Vector2D::add(Vector2D p, Vector2D q) {
   Vector2D r;
   r.x = p.x + q.x;
   r.y = p.y + q.y;
@@ -29,6 +29,6 @@ Vector2D add(Vector2D p, Vector2D q) {
 }
 
 // 2ベクトル間の距離
-double distance(Vector2D p, Vector2D q) {
+double Vector2D::distance(Vector2D p, Vector2D q) {
   return std::hypot(p.x - q.x, p.y - q.y);
 }
