@@ -2,7 +2,7 @@
 #include "draw.hpp"
 #include "particle.hpp"
 #include "fiber.hpp"
-#include "force.hpp"
+#include "function.cpp"
 #include <cmath>
 
 int main() {
@@ -23,6 +23,7 @@ int main() {
     double y3 = 50;
     double font_size = 0.6;
     int time_step = 0;
+    calc_restoring_force(particle_array, fiber_array);
 
     while (true) {
       drawer.clear();
