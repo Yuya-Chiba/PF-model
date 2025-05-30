@@ -15,6 +15,8 @@ class Particle {
       int id;
 
       // メソッド
+      double get_x();
+      double get_y();
       void set_position(double m, double n);
 
   };
