@@ -2,6 +2,7 @@
 #define DRAW_HPP
 
 #include <opencv2/opencv.hpp>
+#include "vector.hpp"
 #include "particle.hpp"
 #include "fiber.hpp"
 

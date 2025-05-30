@@ -2,17 +2,20 @@
 #define PARTICLE_HPP
 
 #include <cmath>
+#include "vector.hpp"
 
 class Particle {
 
   public:
-      // x,y: 粒子の座標  radius: 粒子半径　id: 粒子番号
-      double x, y;
+      // radius: 粒子半径　id: 粒子番号
+      // position: 粒子位置、xとyの2次元ベクトルとして持たせる
+      // 参照時はposition.xなど
+      Vector2D position;
       double radius;
       int id;
 
       // メソッド
-      void set_xy(double m, double n);
+      void set_position(double m, double n);
 
   };
 

@@ -33,8 +33,9 @@ int main() {
       double x2 = center_x + move_radius * std::cos(angle);
       double y2 = center_y;
 
-      particle_array[0].set_xy(x1,y1);
-      particle_array[1].set_xy(x2,y2);
+      particle_array[0].set_position(x1,y1);
+      // particle_array[0].position.set(x1,y1); という書き方でもよい
+      particle_array[1].set_position(x2,y2);
       particle_array[0].radius = radius;
       particle_array[1].radius = radius;
 
