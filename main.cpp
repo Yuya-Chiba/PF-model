@@ -1,16 +1,16 @@
+#include "vector.hpp"
 #include "draw.hpp"
 #include "particle.hpp"
 #include "fiber.hpp"
+#include "force.hpp"
 #include <cmath>
-#include <vector>
 
 int main() {
+    
     Drawer drawer;
 
     std::vector<Particle> particle_array(2);
-    // Particle p, q;
     std::vector<Fiber> fiber_array(1);
-    // Fiber f;
     fiber_array[0].particle1 = &particle_array[0];
     fiber_array[0].particle2 = &particle_array[1];
     double angle = 0.0;
@@ -50,7 +50,6 @@ int main() {
       // パラメータ表示
       //drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step) + "      fiber_length: "+ std::to_string(fiber_length));
       //drawer.show_param(x3, y3+40, font_size, "particle 1: ("+ std::to_string(x1) + "," + std::to_string(y1) + ")");
-      //drawer.show_param(x3, y3+80, font_size, "particle 2: ("+ std::to_string(x2) + "," + std::to_string(y2) + ")");
       
       drawer.show("PF-model");
 

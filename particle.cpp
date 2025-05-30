@@ -5,10 +5,3 @@ void Particle::set_xy(double m, double n) {
   x = m;
   y = n;
 }
-
-// 2粒子の足し算
-Particle add(Particle a, Particle b) {
-  Particle c;
-  c.set_xy(a.x + b.x, a.y + b.y);
-  return c;
-}

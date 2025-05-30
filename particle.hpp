@@ -13,7 +13,6 @@ class Particle {
 
       // メソッド
       void set_xy(double m, double n);
-      Particle add(Particle a, Particle b);
 
   };
 
