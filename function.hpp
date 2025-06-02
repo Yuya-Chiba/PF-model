@@ -16,7 +16,7 @@ void calc_contraction_force(std::vector<Particle>& particle_array, const std::ve
 // 復元力を計算する
 void calc_restoring_force(std::vector<Particle>& particle_array, const std::vector<Fiber>& fiber_array);
 
-// 進展力を計算する
+// 伸展力を計算する
 void calc_extension_force(std::vector<Particle>& particle_array, const std::vector<Fiber>& fiber_array);
 
 #endif
