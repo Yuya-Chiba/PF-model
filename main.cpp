@@ -11,6 +11,7 @@ int main() {
 
     std::vector<Particle> particle_array(2);
     std::vector<Fiber> fiber_array(1);
+    int particle_num = 2;
     fiber_array[0].particle1 = &particle_array[0];
     fiber_array[0].particle2 = &particle_array[1];
     double angle = 0.0;
@@ -23,24 +24,34 @@ int main() {
     double y3 = 50;
     double font_size = 0.6;
     int time_step = 0;
-    calc_restoring_force(particle_array, fiber_array);
+    double gamma = 10; // 粘性抵抗係数
+    Vector2D v; // ベクトル計算用、実際に値が入るわけではない
+
+    particle_array[0].set_position(300,300);
+    particle_array[1].set_position(400,300);
 
     while (true) {
       drawer.clear();
 
-      // 粒子の位置をサイン波で動かす
-      double x1 = center_x - move_radius * std::cos(angle);
-      double y1 = center_y;
-      double x2 = center_x + move_radius * std::cos(angle);
-      double y2 = center_y;
-
-      particle_array[0].set_position(x1,y1);
+      // particle_array[0].set_position(0,0);
       // particle_array[0].position.set(x1,y1); という書き方でもよい
-      particle_array[1].set_position(x2,y2);
+      // particle_array[1].set_position(0,0);
       particle_array[0].radius = radius;
       particle_array[1].radius = radius;
 
       fiber_array[0].thickness = fiber_thickness;
+
+      calc_restoring_force(particle_array, fiber_array);
+
+      Vector2D dr[particle_num];
+      for(int i=0; i<particle_num; i++){
+        dr[i] = v.multiple(particle_array[i].force,1/gamma);
+      }
+
+      //座標の更新
+      for(int i=0; i<particle_num; i++){
+        particle_array[i].position = v.add(particle_array[i].position , dr[i]); //粒子の移動
+      }
 
       // ファイバー（赤）
       drawer.draw_fiber(fiber_array[0], cv::Scalar(0, 0, 255));
@@ -49,13 +60,16 @@ int main() {
       drawer.draw_particle(particle_array[0], cv::Scalar(0, 255, 0));
       drawer.draw_particle(particle_array[1], cv::Scalar(0, 255, 0));
 
+      Vector2D fiber = v.substract(particle_array[0].position, particle_array[1].position);
+      double fiber_length = fiber.length();
+
       // パラメータ表示
-      //drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step) + "      fiber_length: "+ std::to_string(fiber_length));
-      //drawer.show_param(x3, y3+40, font_size, "particle 1: ("+ std::to_string(x1) + "," + std::to_string(y1) + ")");
-      
+      drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step));
+      drawer.show_param(x3, y3+40, font_size, "fiber_length: "+ std::to_string(fiber_length));
+
       drawer.show("PF-model");
 
-      angle += 0.05;
+      // angle += 0.05;
       time_step += 1;
       if (cv::waitKey(30) == 27) break; //window閉じたいときはescキー
     }

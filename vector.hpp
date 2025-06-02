@@ -19,8 +19,12 @@ class Vector2D {
     Vector2D normalize(Vector2D p);
     // ベクトルの和
     Vector2D add(Vector2D p, Vector2D q);
-    // (始点が同じ)2ベクトル間の(終点の)距離
-    double distance(Vector2D p, Vector2D q);
+    // ベクトルの差
+    Vector2D substract(Vector2D p, Vector2D q);
+    // ベクトルをn倍にする
+    Vector2D multiple(Vector2D p, double n);
+    // ベクトルを反対方向にする
+    Vector2D oppo(Vector2D p);
       
   };
 

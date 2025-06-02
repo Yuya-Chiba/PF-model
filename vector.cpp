@@ -8,27 +8,40 @@ void Vector2D::set(double a, double b) {
 
 // ベクトルの長さを求める
 double Vector2D::length() {
-  return std::sqrt(x*x + y*y);
-  // return std::hypot(x, y);
+  return std::hypot(x, y);
 }
 
 // ベクトルの単位ベクトルを返す
 Vector2D Vector2D::normalize(Vector2D p) {
   Vector2D q;
-  q.x = p.x / p.length();
-  q.y = p.y / p.length();
+  q.set(p.x / p.length(), p.y / p.length());
   return q;
 }
 
 // ベクトル和
 Vector2D Vector2D::add(Vector2D p, Vector2D q) {
   Vector2D r;
-  r.x = p.x + q.x;
-  r.y = p.y + q.y;
+  r.set(p.x + q.x, p.y + q.y);
   return r;
 }
 
-// 2ベクトル間の距離
-double Vector2D::distance(Vector2D p, Vector2D q) {
-  return std::hypot(p.x - q.x, p.y - q.y);
+// ベクトル差
+Vector2D Vector2D::substract(Vector2D p, Vector2D q) {
+  Vector2D r;
+  r.set(p.x - q.x, p.y - q.y);
+  return r;
+}
+
+// ベクトルのn倍
+Vector2D Vector2D::multiple(Vector2D p, double n) {
+  Vector2D q;
+  q.set(p.x * n, p.y * n);
+  return q;
+}
+
+// ベクトルを反対方向にする
+Vector2D Vector2D::oppo(Vector2D p) {
+  Vector2D q;
+  q.set(-(p.x), -(p.y));
+  return q;
 }

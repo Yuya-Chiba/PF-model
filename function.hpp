@@ -6,6 +6,7 @@
 #include "particle.hpp"
 #include "fiber.hpp"
 #include "vector.hpp"
+#include <iostream>
 
 // 各ファイバーそれぞれで力を計算し、両端の粒子に力(ベクトル)を足し合わせる
 
@@ -15,7 +16,7 @@ void calc_contraction_force(std::vector<Particle>& particle_array, const std::ve
 // 復元力を計算する
 void calc_restoring_force(std::vector<Particle>& particle_array, const std::vector<Fiber>& fiber_array);
 
-// 伸長力を計算する
+// 進展力を計算する
 void calc_extension_force(std::vector<Particle>& particle_array, const std::vector<Fiber>& fiber_array);
 
 #endif
