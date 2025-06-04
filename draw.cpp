@@ -19,7 +19,7 @@ void Drawer::draw_fiber(Fiber& f, const cv::Scalar& color) {
 }
 
 void Drawer::show_param(double x1, double y1, double size, std::string str) {
-  cv::putText(canvas, str, cv::Point(x1,y1), cv::FONT_HERSHEY_SIMPLEX, size, cv::Scalar(0,0,0), 1.5);
+  cv::putText(canvas, str, cv::Point(x1,y1), cv::FONT_HERSHEY_SIMPLEX, size, cv::Scalar(0,0,0), 2);
 }
 
 void Drawer::show(const std::string& window_name, int delay) {
