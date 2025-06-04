@@ -27,8 +27,8 @@ int main() {
   double gamma = 10; // 粘性抵抗係数
   Vector2D v; // ベクトル計算用、実際に値が入るわけではない
 
-  particle_array[0].set_position(300,300);
-  particle_array[1].set_position(400,300);
+  particle_array[0].set_position(200,300);
+  particle_array[1].set_position(500,300);
   particle_array[0].radius = radius;
   particle_array[1].radius = radius;
 
