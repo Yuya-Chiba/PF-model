@@ -16,7 +16,7 @@ int main() {
   fiber_array[0].particle1 = &particle_array[0];
   fiber_array[0].particle2 = &particle_array[1];
   const double radius = 20;
-  const double fiber_thickness = 5;
+  const double fiber_thickness = 0.5;
   const double center_x = 400;
   const double center_y = 300;
   const double move_radius = 100;
@@ -27,21 +27,23 @@ int main() {
   double gamma = 10; // 粘性抵抗係数
   Vector2D v; // ベクトル計算用、実際に値が入るわけではない
 
-  particle_array[0].set_position(300,300);
-  particle_array[1].set_position(400,300);
+  particle_array[0].set_position(200,300);
+  particle_array[1].set_position(500,300);
+  // particle_array[0].position.set(x1,y1); という書き方でもよい
   particle_array[0].radius = radius;
   particle_array[1].radius = radius;
 
   while (true) {
     drawer.clear();
 
-    // particle_array[0].set_position(0,0);
-    // particle_array[0].position.set(x1,y1); という書き方でもよい
-    // particle_array[1].set_position(0,0);
+    // 粒子にかかる力はリセットする
+    for(int i=0; i<particle_num; i++) particle_array[i].force.set(0, 0);
 
     fiber_array[0].thickness = fiber_thickness;
 
     calc_restoring_force(particle_array, fiber_array);
+    calc_contraction_force(particle_array, fiber_array);
+    calc_extension_force(particle_array, fiber_array);
 
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
