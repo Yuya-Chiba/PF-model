@@ -8,6 +8,10 @@
 #include "vector.hpp"
 #include <iostream>
 
+// 初期配置メソッド
+// 2つのparticleを結んで1つのfiberを返す
+Fiber unit_particle(Particle p1, Particle p2, double fiber_thickness);
+
 // 各ファイバーそれぞれで力を計算し、両端の粒子に力(ベクトル)を足し合わせる
 
 // 収縮力を計算する

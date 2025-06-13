@@ -1,5 +1,63 @@
 #include "function.hpp"
 
+// 初期配置メソッド
+// 2つのparticleを結んで1つのfiberを返す
+Fiber unit_particle(Particle p1, Particle p2, double fiber_thickness) {
+  Fiber f;
+  f.thickness = fiber_thickness;
+  *f.particle1 = p1;
+  *f.particle2 = p2;
+  return f;
+}
+
+// 中心1粒子+周囲6粒子の初期配置を設定する, idもここで設定
+void set_regular_hexagon(std::vector<Particle>& particle_array, std::vector<Fiber>& fiber_array) {
+  const int center_index = 0;
+  const int num_surround = 6;
+
+  particles.resize(1 + num_surround);  // 中心 + 周囲6粒子
+  fibers.clear();
+
+  // 中心粒子
+  particles[center_index].id = center_index;
+  particles[center_index].set_position(center_x, center_y);
+  particles[center_index].radius = radius;
+
+  // 周囲粒子
+  double r = natural_length;
+  for (int i = 0; i < num_surround; ++i) {
+    double angle = M_PI / 3 * i;  // 60度ずつ
+    double x = center_x + r * cos(angle);
+    double y = center_y + r * sin(angle);
+    int idx = i + 1;
+
+    particles[idx].id = idx;
+    particles[idx].set_position(x, y);
+    particles[idx].radius = radius;
+
+    // 中心とのファイバー
+    Fiber f;
+    f.particle1 = &particles[center_index];
+    f.particle2 = &particles[idx];
+    f.thickness = 0.5;
+    f.id = fibers.size();
+    fibers.push_back(f);
+  }
+
+  // 周囲同士を繋ぐファイバー（オプション）
+  for (int i = 1; i <= num_surround; ++i) {
+    int next = (i % num_surround) + 1;
+    Fiber f;
+    f.particle1 = &particles[i];
+    f.particle2 = &particles[next];
+    f.thickness = 0.5;
+    f.id = fibers.size();
+    fibers.push_back(f);
+  }
+}
+
+
+
 // 各ファイバーそれぞれで力を計算し、両端の粒子に力(ベクトル)を足し合わせる
 
 // 動径方向の収縮力を計算する
