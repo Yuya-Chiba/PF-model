@@ -10,12 +10,26 @@ void Drawer::clear() {
 
 // 1粒子の描画
 void Drawer::draw_particle(Particle& p, const cv::Scalar& color) {
-  cv::circle(canvas, cv::Point2f(p.get_x(), p.get_y()), p.radius*10, color, -1, cv::LINE_AA);
+  cv::circle(
+    canvas, 
+    cv::Point2f(p.get_x() * scale, p.get_y() * scale) + origin_offset,
+    p.radius * scale,
+    color, 
+    -1, 
+    cv::LINE_AA
+  );
 }
 
 // 1ファイバーの描画、両端の粒子からxy座標を取得する
 void Drawer::draw_fiber(Fiber& f, const cv::Scalar& color) {
-  cv::line(canvas, cv::Point2f((*f.particle1).get_x(), (*f.particle1).get_y()), cv::Point2f((*f.particle2).get_x(), (*f.particle2).get_y()), color, f.thickness*10, cv::LINE_AA);
+  cv::line(
+    canvas, 
+    cv::Point2f((*f.particle1).get_x() * scale, (*f.particle1).get_y() * scale) + origin_offset,
+    cv::Point2f((*f.particle2).get_x() * scale, (*f.particle2).get_y() * scale) + origin_offset,
+    color, 
+    f.thickness * scale, 
+    cv::LINE_AA
+  );
 }
 
 void Drawer::show_param(double x1, double y1, double size, std::string str) {

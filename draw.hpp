@@ -9,9 +9,13 @@ class Drawer {
 private:
     cv::Mat canvas;
     int width, height;
+    cv::Point2f origin_offset; // 原点を中心に移動するためのオフセット
+    float scale = 10.0f; // 物理座標から画面座標への倍率
 
 public:
-    Drawer(int width = 800, int height = 600);
+    Drawer(int width = 800, int height = 600)
+    : width(width), height(height), origin_offset(width / 2.0f, height / 2.0f) {}
+
     void clear(); // 毎フレーム初期化用
     void draw_particle(Particle& p, const cv::Scalar& color);
     void draw_fiber(Fiber& f, const cv::Scalar& color);
