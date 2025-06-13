@@ -9,17 +9,12 @@ int main() {
     
   Drawer drawer;
 
-  int particle_num = 2;
-  int fiber_num = 1;
-  std::vector<Particle> particle_array(particle_num);
-  std::vector<Fiber> fiber_array(fiber_num);
-  fiber_array[0].particle1 = &particle_array[0];
-  fiber_array[0].particle2 = &particle_array[1];
-  const double radius = 20;
+  std::vector<Particle> cp_array; // 中心粒子の配列
+  std::vector<Particle> pp_array; // 周辺粒子の配列
+  std::vector<Fiber> rf_array; // 動径ファイバー
+  std::vector<Fiber> pf_array; // 外周ファイバー
+  const double radius = 2;
   const double fiber_thickness = 0.5;
-  const double center_x = 400;
-  const double center_y = 300;
-  const double move_radius = 100;
   double x3 = 25;
   double y3 = 50;
   double font_size = 0.6;
@@ -27,47 +22,54 @@ int main() {
   double gamma = 10; // 粘性抵抗係数
   Vector2D v; // ベクトル計算用、実際に値が入るわけではない
 
-  particle_array[0].set_position(200,300);
-  particle_array[1].set_position(500,300);
-  // particle_array[0].position.set(x1,y1); という書き方でもよい
-  particle_array[0].radius = radius;
-  particle_array[1].radius = radius;
+  // 初期座標のセット
+  set_regular_hexagon(cp_array, pp_array, rf_array, pf_array);
+  int particle_num = pp_array.size();
 
   while (true) {
     drawer.clear();
 
     // 粒子にかかる力はリセットする
-    for(int i=0; i<particle_num; i++) particle_array[i].force.set(0, 0);
+    for(int i=0; i<particle_num; i++) pp_array[i].force.set(0, 0);
 
-    fiber_array[0].thickness = fiber_thickness;
+    std::cerr << "particle: " << pp_array[0].get_x() << "," << pp_array[0].get_y() << std::endl;
 
-    calc_restoring_force(particle_array, fiber_array);
-    calc_contraction_force(particle_array, fiber_array);
-    calc_extension_force(particle_array, fiber_array);
+    // 動径方向の計算(中心粒子と周辺粒子)
+    calc_restoring_force(rf_array);
+    calc_contraction_force(rf_array);
+    calc_extension_force(rf_array);
+    cp_array[0].force.set(0,0);
+
+    // 外周方向の計算
+    calc_restoring_force(pf_array);
+    calc_contraction_force(pf_array);
+    //calc_extension_force(pf_array);
 
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
-      dr[i] = v.multiple(particle_array[i].force,1/gamma);
+      dr[i] = v.multiple(pp_array[i].force,1/gamma);
     }
 
     //座標の更新
     for(int i=0; i<particle_num; i++){
-      particle_array[i].position = v.add(particle_array[i].position , dr[i]); //粒子の移動
+      pp_array[i].position = v.add(pp_array[i].position , dr[i]); //粒子の移動
     }
 
-    // ファイバー（赤）
-    drawer.draw_fiber(fiber_array[0], cv::Scalar(0, 0, 255));
-
-    // 粒子（緑）
-    drawer.draw_particle(particle_array[0], cv::Scalar(0, 255, 0));
-    drawer.draw_particle(particle_array[1], cv::Scalar(0, 255, 0));
-
-    Vector2D fiber = v.substract(particle_array[0].position, particle_array[1].position);
-    double fiber_length = fiber.length();
+    // ファイバー（赤）描画
+    for(int i=0; i<rf_array.size(); i++){
+      drawer.draw_fiber(rf_array[i], cv::Scalar(0, 0, 255));
+    }
+    for(int i=0; i<pf_array.size(); i++){
+      drawer.draw_fiber(pf_array[i], cv::Scalar(0, 0, 255));
+    }
+    // 粒子（緑）描画
+    for(int i=0; i<pp_array.size(); i++){
+      drawer.draw_particle(pp_array[i], cv::Scalar(0, 255, 0));
+    }
+    drawer.draw_particle(cp_array[0], cv::Scalar(0, 255, 0));
 
     // パラメータ表示
     drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step));
-    drawer.show_param(x3, y3+40, font_size, "fiber_length: "+ std::to_string(fiber_length));
 
     drawer.show("PF-model");
 

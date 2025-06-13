@@ -15,7 +15,7 @@ int main() {
   std::vector<Fiber> fiber_array(fiber_num);
   fiber_array[0].particle1 = &particle_array[0];
   fiber_array[0].particle2 = &particle_array[1];
-  const double radius = 20;
+  const double radius = 2;
   const double fiber_thickness = 0.5;
   const double center_x = 400;
   const double center_y = 300;
@@ -41,9 +41,9 @@ int main() {
 
     fiber_array[0].thickness = fiber_thickness;
 
-    calc_restoring_force(particle_array, fiber_array);
-    calc_contraction_force(particle_array, fiber_array);
-    calc_extension_force(particle_array, fiber_array);
+    calc_restoring_force(fiber_array);
+    calc_contraction_force(fiber_array);
+    calc_extension_force(fiber_array);
 
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
