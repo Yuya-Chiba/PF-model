@@ -1,6 +1,6 @@
 #include "draw.hpp"
 
-Drawer::Drawer(int w, int h) : width(w), height(h) {
+Drawer::Drawer(int w, int h) : width(width), height(height), origin_offset(width / 2.0f, height / 2.0f) {
   canvas = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
 }
 
