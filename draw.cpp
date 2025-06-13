@@ -10,7 +10,7 @@ void Drawer::clear() {
 
 // 1粒子の描画
 void Drawer::draw_particle(Particle& p, const cv::Scalar& color) {
-  cv::circle(canvas, cv::Point2f(p.get_x(), p.get_y()), p.radius, color, -1, cv::LINE_AA);
+  cv::circle(canvas, cv::Point2f(p.get_x(), p.get_y()), p.radius*10, color, -1, cv::LINE_AA);
 }
 
 // 1ファイバーの描画、両端の粒子からxy座標を取得する

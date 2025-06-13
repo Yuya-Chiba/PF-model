@@ -17,50 +17,50 @@ void set_regular_hexagon(
   std::vector<Fiber>& radial_fiber_array,
   std::vector<Fiber>& peripheral_fiber_array
 ) {
-  const int center_index = 0;
-  const int num_surround = 6;
+  // 各粒子とファイバーの数
+  const int num_center_particle = 1;
+  const int num_peripheral_particle = 6;
+  const int num_radial_fiber = 6;
+  const int num_peripheral_fiber = 6;
 
-  particles.resize(1 + num_surround);  // 中心 + 周囲6粒子
-  fibers.clear();
+  // 配列長の変更、fiberは1つずつpush_backするのでclearで0にする
+  center_particle_array.resize(num_center_particle);
+  peripheral_particle_array.resize(num_peripheral_particle);
+  radial_fiber_array.clear();
+  peripheral_fiber_array.clear();
 
-  // 中心粒子
-  particles[center_index].id = center_index;
-  particles[center_index].set_position(center_x, center_y);
-  particles[center_index].radius = radius;
+  // 中心粒子の設置
+  center_particle_array[0].id = 0;
+  center_particle_array[0].set_position(0, 0);
+  center_particle_array[0].radius = 2;
 
   // 周囲粒子
-  double r = natural_length;
-  for (int i = 0; i < num_surround; ++i) {
-    double angle = M_PI / 3 * i;  // 60度ずつ
-    double x = center_x + r * cos(angle);
-    double y = center_y + r * sin(angle);
-    int idx = i + 1;
+  double r = 14; // 動径ファイバー自然長(parameter.cpp移行予定)
+  for (int i = 0; i < num_peripheral_particle; i++) {
+    double angle = M_PI / 3 * i;  // 60度ずつの設置
+    double x = r * cos(angle);
+    double y = r * sin(angle);
 
-    particles[idx].id = idx;
-    particles[idx].set_position(x, y);
-    particles[idx].radius = radius;
+    peripheral_particle_array[i].id = i;
+    peripheral_particle_array[i].set_position(x, y);
+    peripheral_particle_array[i].radius = 2;
 
-    // 中心とのファイバー
-    Fiber f;
-    f.particle1 = &particles[center_index];
-    f.particle2 = &particles[idx];
-    f.thickness = 0.5;
-    f.id = fibers.size();
-    fibers.push_back(f);
+    // ファイバーを中心粒子とつなぐ
+    double fiber_thickness = 0.5; // 動径ファイバー初期太さ(parameter.cpp移行予定)
+    Fiber f = unit_particle(center_particle_array[0], peripheral_particle_array[i], fiber_thickness);
+    f.id = radial_fiber_array.size();
+    radial_fiber_array.push_back(f);
   }
 
-  // 周囲同士を繋ぐファイバー（オプション）
-  for (int i = 1; i <= num_surround; ++i) {
-    int next = (i % num_surround) + 1;
-    Fiber f;
-    f.particle1 = &particles[i];
-    f.particle2 = &particles[next];
-    f.thickness = 0.5;
-    f.id = fibers.size();
-    fibers.push_back(f);
+  // 周囲粒子同士をファイバーでつなぐ
+  for (int i = 1; i <= num_peripheral_fiber; i++) {
+    int j = (i % num_peripheral_fiber) + 1; // 5番目と0番目をつなぐため必要
+    double fiber_thickness = 0.5; // 外周ファイバー初期太さ(parameter.cpp移行予定)
+    Fiber f = unit_particle(peripheral_particle_array[i], peripheral_particle_array[j], fiber_thickness);
+    f.id = peripheral_fiber_array.size();
+    peripheral_fiber_array.push_back(f);
   }
 }
-
 
 
 // 各ファイバーそれぞれで力を計算し、両端の粒子に力(ベクトル)を足し合わせる

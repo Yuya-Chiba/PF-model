@@ -15,7 +15,7 @@ int main() {
   std::vector<Fiber> fiber_array(fiber_num);
   fiber_array[0].particle1 = &particle_array[0];
   fiber_array[0].particle2 = &particle_array[1];
-  const double radius = 20;
+  const double radius = 2;
   const double fiber_thickness = 0.5;
   const double center_x = 400;
   const double center_y = 300;
