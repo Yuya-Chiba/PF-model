@@ -10,7 +10,7 @@
 
 // 初期配置メソッド
 // 2つのparticleを結んで1つのfiberを返す
-Fiber unit_particle(Particle p1, Particle p2, double fiber_thickness);
+Fiber unit_particle(Particle& p1, Particle& p2, double fiber_thickness);
 // 中心1粒子+周囲6粒子の初期配置を設定する, idもここで設定
 void set_regular_hexagon(
   std::vector<Particle>& center_particle_array, 
@@ -21,10 +21,10 @@ void set_regular_hexagon(
 // 各ファイバーそれぞれで力を計算し、両端の粒子に力(ベクトル)を足し合わせる
 
 // 収縮力を計算する
-void calc_contraction_force(std::vector<Particle>& particle_array, const std::vector<Fiber>& fiber_array);
+void calc_contraction_force(const std::vector<Fiber>& fiber_array);
 // 復元力を計算する
-void calc_restoring_force(std::vector<Particle>& particle_array, const std::vector<Fiber>& fiber_array);
+void calc_restoring_force(const std::vector<Fiber>& fiber_array);
 // 伸展力を計算する
-void calc_extension_force(std::vector<Particle>& particle_array, const std::vector<Fiber>& fiber_array);
+void calc_extension_force(const std::vector<Fiber>& fiber_array);
 
 #endif

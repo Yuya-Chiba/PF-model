@@ -1,6 +1,12 @@
 #include "draw.hpp"
 
-Drawer::Drawer(int w, int h) : width(width), height(height), origin_offset(width / 2.0f, height / 2.0f) {
+Drawer::Drawer(int w, int h)
+  : width(w), height(h), origin_offset(w / 2.0f, h / 2.0f)
+{
+  if (w <= 0 || h <= 0 || w > 5000 || h > 5000) {
+    std::cerr << "Invalid canvas size: " << w << "x" << h << std::endl; // memory_error回避
+    exit(1);
+  }
   canvas = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
 }
 

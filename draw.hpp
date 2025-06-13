@@ -9,8 +9,8 @@ class Drawer {
 private:
     cv::Mat canvas;
     int width, height;
-    cv::Point2f origin_offset; // 原点を中心に移動するためのオフセット
-    float scale = 10.0f; // 物理座標から画面座標への倍率
+    cv::Point2f origin_offset;
+    int scale = 10; // 物理座標から画面座標への倍率
 
 public:
     Drawer(int width = 800, int height = 600);
