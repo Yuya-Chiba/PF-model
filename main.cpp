@@ -11,8 +11,10 @@ int main() {
 
   int particle_num = 2;
   int fiber_num = 1;
-  std::vector<Particle> particle_array(particle_num);
-  std::vector<Fiber> fiber_array(fiber_num);
+  std::vector<Particle> cp_array(); // 中心粒子の配列
+  std::vector<Particle> pp_array(); // 周辺粒子の配列
+  std::vector<Fiber> rf_array(); // 動径ファイバー
+  std::vector<Fiber> pf_array(); // 外周ファイバー
   fiber_array[0].particle1 = &particle_array[0];
   fiber_array[0].particle2 = &particle_array[1];
   const double radius = 20;

@@ -11,7 +11,12 @@ Fiber unit_particle(Particle p1, Particle p2, double fiber_thickness) {
 }
 
 // 中心1粒子+周囲6粒子の初期配置を設定する, idもここで設定
-void set_regular_hexagon(std::vector<Particle>& particle_array, std::vector<Fiber>& fiber_array) {
+void set_regular_hexagon(
+  std::vector<Particle>& center_particle_array, 
+  std::vector<Particle>& peripheral_particle_array, 
+  std::vector<Fiber>& radial_fiber_array,
+  std::vector<Fiber>& peripheral_fiber_array
+) {
   const int center_index = 0;
   const int num_surround = 6;
 
