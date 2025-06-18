@@ -46,3 +46,17 @@ void Drawer::show(const std::string& window_name, int delay) {
   cv::imshow(window_name, canvas);
   cv::waitKey(delay);
 }
+
+void Drawer::save_frame(bool image_save_flg, int frame_number, const std::string& folder_path) {
+  if (image_save_flg == true) {
+    // フォルダが存在しない場合は作成
+    std::filesystem::create_directories(folder_path);
+
+    // 画像ファイル名を作成
+    std::ostringstream filename;
+    filename << folder_path << "/frame_" << std::setfill('0') << std::setw(5) << frame_number << ".png";
+
+    // 保存
+    cv::imwrite(filename.str(), canvas);
+  }
+}

@@ -2,6 +2,7 @@
 #define DRAW_HPP
 
 #include <opencv2/opencv.hpp>
+#include <filesystem>
 #include "particle.hpp"
 #include "fiber.hpp"
 
@@ -19,6 +20,7 @@ public:
     void draw_fiber(Fiber& f, const cv::Scalar& color);
     void show_param(double x1, double y1, double size, std::string str);
     void show(const std::string& window_name = "PF-model", int delay = 30);
+    void save_frame(bool image_save_flg, int frame_number, const std::string& folder_path);
 };
 
 #endif

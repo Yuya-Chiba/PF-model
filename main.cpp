@@ -20,6 +20,8 @@ int main() {
   double font_size = 0.6;
   double time_step = 0;
   double gamma = 10; // 粘性抵抗係数
+  bool image_save_flg = true;
+  std::string folder_path = "../result";
   Vector2D v; // ベクトル計算用、実際に値が入るわけではない
 
   // 初期座標のセット
@@ -72,6 +74,7 @@ int main() {
     drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step));
 
     drawer.show("PF-model");
+    drawer.save_frame(image_save_flg, int(time_step*10), folder_path);
 
     time_step +=0.1;
     if (cv::waitKey(30) == 27) break; //window閉じたいときはescキー
