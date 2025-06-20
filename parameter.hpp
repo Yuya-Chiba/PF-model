@@ -10,6 +10,7 @@ inline constexpr int num_center_particle = 1; //中心粒子
 inline constexpr int num_peripheral_particle = 6; //周辺粒子
 inline constexpr int num_radial_fiber = 6; //動径ファイバー
 inline constexpr int num_peripheral_fiber = 6; //外周ファイバー
+inline constexpr double time_step = 0.1;
 
 // ファイバーの初期値関連
 inline constexpr double r0_r = 14; // 動径ファイバー自然長

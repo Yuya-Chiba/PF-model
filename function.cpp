@@ -48,7 +48,7 @@ void set_regular_hexagon(
   }
 
   // 周囲粒子同士をファイバーでつなぐ
-  for (int i = 0; i <= num_peripheral_fiber; i++) {
+  for (int i = 0; i < num_peripheral_fiber; i++) {
     int j = (i + 1)% num_peripheral_fiber; // 5番目と0番目をつなぐため必要
     Fiber f = unit_particle(peripheral_particle_array[i], peripheral_particle_array[j], init_pf_thickness);
     f.id = peripheral_fiber_array.size();

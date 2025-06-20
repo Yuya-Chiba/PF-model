@@ -14,7 +14,7 @@ int main() {
   std::vector<Particle> pp_array; // 周辺粒子の配列
   std::vector<Fiber> rf_array; // 動径ファイバー
   std::vector<Fiber> pf_array; // 外周ファイバー
-  double time_step = 0;
+  double now_time = 0;
   bool image_save_flg = false;
   std::string folder_path = "../result";
   Vector2D v; // ベクトル計算用、実際に値が入るわけではない
@@ -41,10 +41,10 @@ int main() {
     calc_restoring_force_pf(pf_array);
     calc_contraction_force_pf(pf_array);
 
-    Vector2D dc = v.multiple(cp_array[0].force, 1/viscous_gamma);
+    Vector2D dc = v.multiple(cp_array[0].force, time_step/viscous_gamma);
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
-      dr[i] = v.multiple(pp_array[i].force, 1/viscous_gamma);
+      dr[i] = v.multiple(pp_array[i].force, time_step/viscous_gamma);
     }
 
     //座標の更新
@@ -66,16 +66,16 @@ int main() {
     }
     drawer.draw_particle(cp_array[0], cv::Scalar(0, 255, 0));
     // パラメータ表示
-    drawer.show_param(25, 50, 0.6, "Step: "+ std::to_string(time_step));
+    drawer.show_param(25, 50, 0.6, "Step: "+ std::to_string(now_time));
     drawer.show("PF-model");
 
     // 画像保存
-    if (std::floor(time_step) == time_step) {
-    drawer.save_frame(image_save_flg, int(time_step), folder_path);
+    if (std::floor(now_time) == now_time) {
+    drawer.save_frame(image_save_flg, int(now_time), folder_path);
     }
 
-    time_step +=0.1;
-    if (cv::waitKey(30) == 27 || time_step == max_time) break; //window閉じたいときはescキー
+    now_time += time_step;
+    if (cv::waitKey(30) == 27 || now_time >= max_time) break; //window閉じたいときはescキー
   }
 
   return 0;
