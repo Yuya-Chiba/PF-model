@@ -3,6 +3,7 @@
 #include "particle.hpp"
 #include "fiber.hpp"
 #include "function.hpp"
+#include "parameter.hpp"
 #include <cmath>
 
 int main() {
@@ -13,14 +14,8 @@ int main() {
   std::vector<Particle> pp_array; // 周辺粒子の配列
   std::vector<Fiber> rf_array; // 動径ファイバー
   std::vector<Fiber> pf_array; // 外周ファイバー
-  const double radius = 2;
-  const double fiber_thickness = 0.5;
-  double x3 = 25;
-  double y3 = 50;
-  double font_size = 0.6;
-  double time_step = 0;
-  double gamma = 10; // 粘性抵抗係数
-  bool image_save_flg = true;
+  double now_time = 0;
+  bool image_save_flg = false;
   std::string folder_path = "../result";
   Vector2D v; // ベクトル計算用、実際に値が入るわけではない
 
@@ -33,28 +28,29 @@ int main() {
 
     // 粒子にかかる力はリセットする
     for(int i=0; i<particle_num; i++) pp_array[i].force.set(0, 0);
-
-    std::cerr << "particle: " << pp_array[0].get_x() << "," << pp_array[0].get_y() << std::endl;
-
-    // 動径方向の計算(中心粒子と周辺粒子)
-    calc_restoring_force(rf_array);
-    calc_contraction_force(rf_array);
-    calc_extension_force(rf_array);
     cp_array[0].force.set(0,0);
 
-    // 外周方向の計算
-    calc_restoring_force(pf_array);
-    calc_contraction_force(pf_array);
-    //calc_extension_force(pf_array);
+    //std::cerr << "particle: " << cp_array[0].get_x() << "," << cp_array[0].get_y() << std::endl;
 
+    // 動径方向の計算(中心粒子と周辺粒子)
+    calc_restoring_force_rf(rf_array);
+    calc_contraction_force_rf(rf_array);
+    calc_extension_force(rf_array);
+
+    // 外周方向の計算
+    calc_restoring_force_pf(pf_array);
+    calc_contraction_force_pf(pf_array);
+
+    Vector2D dc = v.multiple(cp_array[0].force, time_step/viscous_gamma);
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
-      dr[i] = v.multiple(pp_array[i].force,1/gamma);
+      dr[i] = v.multiple(pp_array[i].force, time_step/viscous_gamma);
     }
 
     //座標の更新
+    cp_array[0].position = v.add(cp_array[0].position , dc); //中心粒子の移動
     for(int i=0; i<particle_num; i++){
-      pp_array[i].position = v.add(pp_array[i].position , dr[i]); //粒子の移動
+      pp_array[i].position = v.add(pp_array[i].position , dr[i]); //外周粒子の移動
     }
 
     // ファイバー（赤）描画
@@ -69,15 +65,17 @@ int main() {
       drawer.draw_particle(pp_array[i], cv::Scalar(0, 255, 0));
     }
     drawer.draw_particle(cp_array[0], cv::Scalar(0, 255, 0));
-
     // パラメータ表示
-    drawer.show_param(x3, y3, font_size, "Step: "+ std::to_string(time_step));
-
+    drawer.show_param(25, 50, 0.6, "Step: "+ std::to_string(now_time));
     drawer.show("PF-model");
-    drawer.save_frame(image_save_flg, int(time_step*10), folder_path);
 
-    time_step +=0.1;
-    if (cv::waitKey(30) == 27) break; //window閉じたいときはescキー
+    // 画像保存
+    if (std::floor(now_time) == now_time) {
+    drawer.save_frame(image_save_flg, int(now_time), folder_path);
+    }
+
+    now_time += time_step;
+    if (cv::waitKey(30) == 27 || now_time >= max_time) break; //window閉じたいときはescキー
   }
 
   return 0;
