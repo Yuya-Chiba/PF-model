@@ -41,8 +41,8 @@ int main() {
 
     fiber_array[0].thickness = fiber_thickness;
 
-    calc_restoring_force(fiber_array);
-    calc_contraction_force(fiber_array);
+    calc_restoring_force_rf(fiber_array);
+    calc_contraction_force_rf(fiber_array);
     calc_extension_force(fiber_array);
 
     Vector2D dr[particle_num];

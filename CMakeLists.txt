@@ -10,7 +10,7 @@ add_executable(test_2particle vector.cpp particle.cpp fiber.cpp draw.cpp functio
 project(PF_model CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_executable(PF_model vector.cpp particle.cpp fiber.cpp draw.cpp function.cpp main.cpp)
+add_executable(PF_model vector.cpp particle.cpp fiber.cpp draw.cpp function.cpp parameter.hpp main.cpp)
 
 # opencvの導入
 find_package(OpenCV REQUIRED)
