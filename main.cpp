@@ -14,9 +14,9 @@ int main() {
   std::vector<Particle> pp_array; // 周辺粒子の配列
   std::vector<Fiber> rf_array; // 動径ファイバー
   std::vector<Fiber> pf_array; // 外周ファイバー
-  double now_time = 0;
+  int now_step = 0;
   bool image_save_flg = false;
-  std::string folder_path = "../result";
+  std::string folder_path = "../result/only_force";
   Vector2D v; // ベクトル計算用、実際に値が入るわけではない
 
   // 初期座標のセット
@@ -29,6 +29,9 @@ int main() {
     // 粒子にかかる力はリセットする
     for(int i=0; i<particle_num; i++) pp_array[i].force.set(0, 0);
     cp_array[0].force.set(0,0);
+
+    // 時間の計算
+    double now_time = now_step * time_step;
 
     //std::cerr << "particle: " << cp_array[0].get_x() << "," << cp_array[0].get_y() << std::endl;
 
@@ -70,11 +73,11 @@ int main() {
     drawer.show("PF-model");
 
     // 画像保存
-    if (std::floor(now_time) == now_time) {
-    drawer.save_frame(image_save_flg, int(now_time), folder_path);
+    if (int(now_time*10)%10 == 0 ) {
+      drawer.save_frame(image_save_flg, int(now_time), folder_path);
     }
+    now_step ++;
 
-    now_time += time_step;
     if (cv::waitKey(30) == 27 || now_time >= max_time) break; //window閉じたいときはescキー
   }
 
