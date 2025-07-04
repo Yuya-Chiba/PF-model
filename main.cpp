@@ -17,7 +17,7 @@ int main() {
   int now_step = 0;
   bool image_save_flg = false;
   std::string folder_path = "../result/only_force";
-  Vector2D v; // ベクトル計算用、実際に値が入るわけではない
+  
 
   // 初期座標のセット
   set_regular_hexagon(cp_array, pp_array, rf_array, pf_array);
@@ -49,15 +49,15 @@ int main() {
     // 外周ファイバーは動径ファイバー依存
 
     // 5. 運動方程式と座標rの更新
-    Vector2D dc = v.multiple(cp_array[0].force, time_step/viscous_gamma);
+    Vector2D dc = Vector2D::multiple(cp_array[0].force, time_step/viscous_gamma);
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
-      dr[i] = v.multiple(pp_array[i].force, time_step/viscous_gamma);
+      dr[i] = Vector2D::multiple(pp_array[i].force, time_step/viscous_gamma);
     }
 
-    cp_array[0].position = v.add(cp_array[0].position , dc); //中心粒子の移動
+    cp_array[0].position = Vector2D::add(cp_array[0].position , dc); //中心粒子の移動
     for(int i=0; i<particle_num; i++){
-      pp_array[i].position = v.add(pp_array[i].position , dr[i]); //外周粒子の移動
+      pp_array[i].position = Vector2D::add(pp_array[i].position , dr[i]); //外周粒子の移動
     }
 
     // ファイバー（赤）描画

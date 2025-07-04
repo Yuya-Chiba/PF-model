@@ -25,7 +25,7 @@ int main() {
   double font_size = 0.6;
   double time_step = 0;
   double gamma = 10; // 粘性抵抗係数
-  Vector2D v; // ベクトル計算用、実際に値が入るわけではない
+  
 
   particle_array[0].set_position(200,300);
   particle_array[1].set_position(500,300);
@@ -47,12 +47,12 @@ int main() {
 
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
-      dr[i] = v.multiple(particle_array[i].force,1/gamma);
+      dr[i] = Vector2D::multiple(particle_array[i].force,1/gamma);
     }
 
     //座標の更新
     for(int i=0; i<particle_num; i++){
-      particle_array[i].position = v.add(particle_array[i].position , dr[i]); //粒子の移動
+      particle_array[i].position = Vector2D::add(particle_array[i].position , dr[i]); //粒子の移動
     }
 
     // ファイバー（赤）
@@ -62,7 +62,7 @@ int main() {
     drawer.draw_particle(particle_array[0], cv::Scalar(0, 255, 0));
     drawer.draw_particle(particle_array[1], cv::Scalar(0, 255, 0));
 
-    Vector2D fiber = v.substract(particle_array[0].position, particle_array[1].position);
+    Vector2D fiber = Vector2D::subtract(particle_array[0].position, particle_array[1].position);
     double fiber_length = fiber.length();
 
     // パラメータ表示
