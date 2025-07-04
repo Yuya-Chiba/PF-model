@@ -15,7 +15,6 @@ int main() {
   std::vector<Particle> pp_array; // 周辺粒子の配列
   std::vector<Fiber> rf_array; // 動径ファイバー
   std::vector<Fiber> pf_array; // 外周ファイバー
-  std::vector<Vector2D> cp_force_array;
   int now_step = 0;
   bool image_save_flg = false;
   std::string folder_path = "../result/only_force";
@@ -40,31 +39,43 @@ int main() {
     // 2. 働く力の計算
     // 動径方向の計算(中心粒子と周辺粒子)
     for (int i = 0; i < num_radial_fiber; i++) {
-      Fiber rf = rf_array[i];
-      Vector2D restoring_force = calc_restoring_force_rf(rf);
-      Vector2D contraction_force = calc_contraction_force_rf(rf);
-      Vector2D extension_force = calc_extension_force(rf);
+      Vector2D restoring_force = calc_restoring_force_rf(rf_array[i]);
+      Vector2D contraction_force = calc_contraction_force_rf(rf_array[i]);
+      Vector2D extension_force = calc_extension_force(rf_array[i]);
 
+      // 両端粒子にそれぞれ対称な力を加える p1_forceなどは&を使って直接参照する
+      Force& force_p1 = (*rf_array[i].particle1).force;
+      Force& force_p2 = (*rf_array[i].particle2).force;
+      force_p1.restoring_radial = Vector2D::add(force_p1.restoring_radial, Vector2D::oppo(restoring_force));
+      force_p2.restoring_radial = Vector2D::add(force_p2.restoring_radial, restoring_force);
+      force_p1.contraction_radial = Vector2D::add(force_p1.contraction_radial, Vector2D::oppo(contraction_force));
+      force_p2.contraction_radial = Vector2D::add(force_p2.contraction_radial, contraction_force);
+      force_p1.extension_radial = Vector2D::add(force_p1.extension_radial, Vector2D::oppo(extension_force));
+      force_p2.extension_radial = Vector2D::add(force_p2.extension_radial, extension_force);
     }
-
-    (*f.particle1).force = Vector2D::add((*f.particle1).force, Vector2D::oppo(rt));
-    (*f.particle2).force = Vector2D::add((*f.particle2).force, rt);
-
-    calc_contraction_force_rf(rf_array);
-    calc_extension_force(rf_array);
     // 外周方向の計算
-    calc_restoring_force_pf(pf_array);
-    calc_contraction_force_pf(pf_array);
+    for (int i = 0; i < num_radial_fiber; i++) {
+      Vector2D restoring_force = calc_restoring_force_pf(pf_array[i]);
+      Vector2D contraction_force = calc_contraction_force_pf(pf_array[i]);
+
+      // 両端粒子にそれぞれ対称な力を加える p1_forceなどは&を使って直接参照する
+      Force& force_p1 = (*pf_array[i].particle1).force;
+      Force& force_p2 = (*pf_array[i].particle2).force;
+      force_p1.restoring_peripheral = Vector2D::add(force_p1.restoring_peripheral, Vector2D::oppo(restoring_force));
+      force_p2.restoring_peripheral = Vector2D::add(force_p2.restoring_peripheral, restoring_force);
+      force_p1.contraction_peripheral = Vector2D::add(force_p1.contraction_peripheral, Vector2D::oppo(contraction_force));
+      force_p2.contraction_peripheral = Vector2D::add(force_p2.contraction_peripheral, contraction_force);
+    }
 
     // 3. 成長方程式と太さqの更新
     
     // 外周ファイバーは動径ファイバー依存
 
     // 5. 運動方程式と座標rの更新
-    Vector2D dc = Vector2D::multiple(cp_array[0].force, time_step/viscous_gamma);
+    Vector2D dc = Vector2D::multiple(cp_array[0].force.total(), time_step/viscous_gamma);
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
-      dr[i] = Vector2D::multiple(pp_array[i].force, time_step/viscous_gamma);
+      dr[i] = Vector2D::multiple(pp_array[i].force.total(), time_step/viscous_gamma);
     }
 
     cp_array[0].position = Vector2D::add(cp_array[0].position , dc); //中心粒子の移動

@@ -42,13 +42,13 @@ int main() {
 
     fiber_array[0].thickness = fiber_thickness;
 
-    calc_restoring_force_rf(fiber_array);
-    calc_contraction_force_rf(fiber_array);
-    calc_extension_force(fiber_array);
+    //calc_restoring_force_rf(fiber_array);
+    //calc_contraction_force_rf(fiber_array);
+    //calc_extension_force(fiber_array);
 
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
-      dr[i] = Vector2D::multiple(particle_array[i].force,1/gamma);
+      dr[i] = Vector2D::multiple(particle_array[i].force.total(),1/gamma);
     }
 
     //座標の更新
