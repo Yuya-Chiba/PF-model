@@ -29,8 +29,8 @@ int main() {
     drawer.clear();
 
     // 粒子にかかる力はリセットする
-    for(int i=0; i<particle_num; i++) pp_array[i].force.set(0, 0);
-    cp_array[0].force.set(0,0);
+    for(int i=0; i<particle_num; i++) pp_array[i].force.clear();
+    cp_array[0].force.clear();
 
     // 時間の計算
     double now_time = now_step * time_step;

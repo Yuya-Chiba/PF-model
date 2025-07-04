@@ -3,14 +3,15 @@
 
 #include <cmath>
 #include "vector.hpp"
+#include "force.hpp"
 
 class Particle {
 
   public:
       // position: 粒子位置、xとyの2次元ベクトルとして持たせる 参照時はposition.xなど
       Vector2D position;
-      // force: 粒子にかかる力の合計、xとyの2次元ベクトルとして持たせる
-      Vector2D force;
+      // force: 粒子にかかる力、xとyの2次元ベクトルとして持たせる
+      Force force;
       // radius: 粒子半径　id: 粒子番号
       double radius;
       int id;

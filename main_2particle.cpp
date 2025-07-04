@@ -38,7 +38,7 @@ int main() {
     drawer.clear();
 
     // 粒子にかかる力はリセットする
-    for(int i=0; i<particle_num; i++) particle_array[i].force.set(0, 0);
+    for(int i=0; i<particle_num; i++) particle_array[i].force.clear();
 
     fiber_array[0].thickness = fiber_thickness;
 
