@@ -2,6 +2,7 @@
 #include "draw.hpp"
 #include "particle.hpp"
 #include "fiber.hpp"
+#include "force.hpp"
 #include "function.hpp"
 #include "parameter.hpp"
 #include <cmath>
@@ -14,6 +15,7 @@ int main() {
   std::vector<Particle> pp_array; // 周辺粒子の配列
   std::vector<Fiber> rf_array; // 動径ファイバー
   std::vector<Fiber> pf_array; // 外周ファイバー
+  std::vector<Vector2D> cp_force_array;
   int now_step = 0;
   bool image_save_flg = false;
   std::string folder_path = "../result/only_force";
@@ -37,7 +39,17 @@ int main() {
 
     // 2. 働く力の計算
     // 動径方向の計算(中心粒子と周辺粒子)
-    calc_restoring_force_rf(rf_array);
+    for (int i = 0; i < num_radial_fiber; i++) {
+      Fiber rf = rf_array[i];
+      Vector2D restoring_force = calc_restoring_force_rf(rf);
+      Vector2D contraction_force = calc_contraction_force_rf(rf);
+      Vector2D extension_force = calc_extension_force(rf);
+
+    }
+
+    (*f.particle1).force = Vector2D::add((*f.particle1).force, Vector2D::oppo(rt));
+    (*f.particle2).force = Vector2D::add((*f.particle2).force, rt);
+
     calc_contraction_force_rf(rf_array);
     calc_extension_force(rf_array);
     // 外周方向の計算

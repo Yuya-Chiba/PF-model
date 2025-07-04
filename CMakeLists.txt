@@ -5,12 +5,12 @@ cmake_minimum_required(VERSION 3.13.5)
 project(test_2particle CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_executable(test_2particle vector.cpp particle.cpp fiber.cpp draw.cpp function.cpp main_2particle.cpp)
+add_executable(test_2particle vector.cpp particle.cpp fiber.cpp force.cpp draw.cpp function.cpp main_2particle.cpp)
 
 project(PF_model CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_executable(PF_model vector.cpp particle.cpp fiber.cpp draw.cpp function.cpp parameter.hpp main.cpp)
+add_executable(PF_model vector.cpp particle.cpp fiber.cpp force.cpp draw.cpp function.cpp parameter.hpp main.cpp)
 
 # opencvの導入
 find_package(OpenCV REQUIRED)

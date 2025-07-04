@@ -2,6 +2,7 @@
 #include "draw.hpp"
 #include "particle.hpp"
 #include "fiber.hpp"
+#include "force.hpp"
 #include "function.hpp"
 #include <cmath>
 
