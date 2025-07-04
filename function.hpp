@@ -29,6 +29,10 @@ Vector2D calc_restoring_force_pf(const Fiber& f); // 外周
 // 伸展力を計算する
 Vector2D calc_extension_force(const Fiber& f);
 
+// ファイバーについて計算した力を、その両端の粒子に足す
+void add_radial_forces (const Fiber& f); // 動径
+void add_peripheral_forces (const Fiber& f); // 外周
+
 // ここからファイバーの成長に関する関数
 // 動径ファイバーのdq/dtを計算する
 double calc_thickness_variation_rf(const Fiber& f);

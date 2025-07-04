@@ -124,6 +124,36 @@ Vector2D calc_extension_force(const Fiber& f) {
   return rt;
 }
 
+// ファイバーについて計算した力を、その両端の粒子に足す
+// 動径方向
+void add_radial_forces (const Fiber& f) {
+  Vector2D restoring_force = calc_restoring_force_rf(f);
+  Vector2D contraction_force = calc_contraction_force_rf(f);
+  Vector2D extension_force = calc_extension_force(f);
+
+  // 両端粒子にそれぞれ対称な力を加える p1_forceなどは&を使って直接参照する
+  Force& force_p1 = (*f.particle1).force;
+  Force& force_p2 = (*f.particle2).force;
+  force_p1.restoring_radial = Vector2D::add(force_p1.restoring_radial, Vector2D::oppo(restoring_force));
+  force_p2.restoring_radial = Vector2D::add(force_p2.restoring_radial, restoring_force);
+  force_p1.contraction_radial = Vector2D::add(force_p1.contraction_radial, Vector2D::oppo(contraction_force));
+  force_p2.contraction_radial = Vector2D::add(force_p2.contraction_radial, contraction_force);
+  force_p1.extension_radial = Vector2D::add(force_p1.extension_radial, Vector2D::oppo(extension_force));
+  force_p2.extension_radial = Vector2D::add(force_p2.extension_radial, extension_force);
+}
+// 外周方向
+void add_peripheral_forces (const Fiber& f) {
+  Vector2D restoring_force = calc_restoring_force_pf(f);
+  Vector2D contraction_force = calc_contraction_force_pf(f);
+
+  // 両端粒子にそれぞれ対称な力を加える p1_forceなどは&を使って直接参照する
+  Force& force_p1 = (*f.particle1).force;
+  Force& force_p2 = (*f.particle2).force;
+  force_p1.restoring_peripheral = Vector2D::add(force_p1.restoring_peripheral, Vector2D::oppo(restoring_force));
+  force_p2.restoring_peripheral = Vector2D::add(force_p2.restoring_peripheral, restoring_force);
+  force_p1.contraction_peripheral = Vector2D::add(force_p1.contraction_peripheral, Vector2D::oppo(contraction_force));
+  force_p2.contraction_peripheral = Vector2D::add(force_p2.contraction_peripheral, contraction_force);
+}
 // ここからファイバーの成長に関する関数
 // 動径ファイバーのdq/dtを計算する ここでは1ファイバーに対して計算
 double calc_thickness_variation_rf(const Fiber& f) {

@@ -39,32 +39,11 @@ int main() {
     // 2. 働く力の計算
     // 動径方向の計算(中心粒子と周辺粒子)
     for (int i = 0; i < num_radial_fiber; i++) {
-      Vector2D restoring_force = calc_restoring_force_rf(rf_array[i]);
-      Vector2D contraction_force = calc_contraction_force_rf(rf_array[i]);
-      Vector2D extension_force = calc_extension_force(rf_array[i]);
-
-      // 両端粒子にそれぞれ対称な力を加える p1_forceなどは&を使って直接参照する
-      Force& force_p1 = (*rf_array[i].particle1).force;
-      Force& force_p2 = (*rf_array[i].particle2).force;
-      force_p1.restoring_radial = Vector2D::add(force_p1.restoring_radial, Vector2D::oppo(restoring_force));
-      force_p2.restoring_radial = Vector2D::add(force_p2.restoring_radial, restoring_force);
-      force_p1.contraction_radial = Vector2D::add(force_p1.contraction_radial, Vector2D::oppo(contraction_force));
-      force_p2.contraction_radial = Vector2D::add(force_p2.contraction_radial, contraction_force);
-      force_p1.extension_radial = Vector2D::add(force_p1.extension_radial, Vector2D::oppo(extension_force));
-      force_p2.extension_radial = Vector2D::add(force_p2.extension_radial, extension_force);
+      add_radial_forces(rf_array[i]);
     }
     // 外周方向の計算
     for (int i = 0; i < num_radial_fiber; i++) {
-      Vector2D restoring_force = calc_restoring_force_pf(pf_array[i]);
-      Vector2D contraction_force = calc_contraction_force_pf(pf_array[i]);
-
-      // 両端粒子にそれぞれ対称な力を加える p1_forceなどは&を使って直接参照する
-      Force& force_p1 = (*pf_array[i].particle1).force;
-      Force& force_p2 = (*pf_array[i].particle2).force;
-      force_p1.restoring_peripheral = Vector2D::add(force_p1.restoring_peripheral, Vector2D::oppo(restoring_force));
-      force_p2.restoring_peripheral = Vector2D::add(force_p2.restoring_peripheral, restoring_force);
-      force_p1.contraction_peripheral = Vector2D::add(force_p1.contraction_peripheral, Vector2D::oppo(contraction_force));
-      force_p2.contraction_peripheral = Vector2D::add(force_p2.contraction_peripheral, contraction_force);
+      add_peripheral_forces(pf_array[i]);
     }
 
     // 3. 成長方程式と太さqの更新
