@@ -18,8 +18,8 @@ void set_regular_hexagon(
   std::vector<Fiber>& radial_fiber_array,
   std::vector<Fiber>& peripheral_fiber_array
 );
-// 各ファイバーそれぞれで力を計算し、両端の粒子に力(ベクトル)を足し合わせる
 
+// 各ファイバーそれぞれで力を計算し、両端の粒子に力(ベクトル)を足し合わせる ファイバー全てについて計算
 // 収縮力を計算する
 void calc_contraction_force_rf(const std::vector<Fiber>& fiber_array); // 動径
 void calc_contraction_force_pf(const std::vector<Fiber>& fiber_array); // 外周
@@ -28,5 +28,10 @@ void calc_restoring_force_rf(const std::vector<Fiber>& fiber_array); // 動径
 void calc_restoring_force_pf(const std::vector<Fiber>& fiber_array); // 外周
 // 伸展力を計算する
 void calc_extension_force(const std::vector<Fiber>& fiber_array);
+
+// ここからファイバーの成長に関する関数
+// 動径ファイバーのdq/dtを計算する ここでは1ファイバーについて計算
+double calc_thickness_variation_rf(const Fiber& f);
+
 
 #endif

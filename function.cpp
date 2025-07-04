@@ -154,3 +154,12 @@ void calc_extension_force(const std::vector<Fiber>& fiber_array) {
     (*f.particle2).force = v.add((*f.particle2).force, rt);
   }
 }
+
+// ここからファイバーの成長に関する関数
+// 動径ファイバーのdq/dtを計算する ここでは1ファイバーに対して計算
+double calc_thickness_variation_rf(const Fiber& f) {
+
+  // u(G)の計算
+  return 0;
+
+}

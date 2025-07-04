@@ -35,22 +35,26 @@ int main() {
 
     //std::cerr << "particle: " << cp_array[0].get_x() << "," << cp_array[0].get_y() << std::endl;
 
+    // 2. 働く力の計算
     // 動径方向の計算(中心粒子と周辺粒子)
     calc_restoring_force_rf(rf_array);
     calc_contraction_force_rf(rf_array);
     calc_extension_force(rf_array);
-
     // 外周方向の計算
     calc_restoring_force_pf(pf_array);
     calc_contraction_force_pf(pf_array);
 
+    // 3. 成長方程式と太さqの更新
+    
+    // 外周ファイバーは動径ファイバー依存
+
+    // 5. 運動方程式と座標rの更新
     Vector2D dc = v.multiple(cp_array[0].force, time_step/viscous_gamma);
     Vector2D dr[particle_num];
     for(int i=0; i<particle_num; i++){
       dr[i] = v.multiple(pp_array[i].force, time_step/viscous_gamma);
     }
 
-    //座標の更新
     cp_array[0].position = v.add(cp_array[0].position , dc); //中心粒子の移動
     for(int i=0; i<particle_num; i++){
       pp_array[i].position = v.add(pp_array[i].position , dr[i]); //外周粒子の移動
