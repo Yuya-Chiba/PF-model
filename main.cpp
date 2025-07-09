@@ -47,19 +47,32 @@ int main() {
     }
 
     // 3. 成長方程式と太さqの更新
-    
-    // 外周ファイバーは動径ファイバー依存
-
-    // 5. 運動方程式と座標rの更新
-    Vector2D dc = Vector2D::multiple(cp_array[0].force.total(), time_step/viscous_gamma);
-    Vector2D dr[particle_num];
-    for(int i=0; i<particle_num; i++){
-      dr[i] = Vector2D::multiple(pp_array[i].force.total(), time_step/viscous_gamma);
+    // 動径ファイバー 方程式
+    double dq_radial[num_radial_fiber];
+    for (int i=0; i<num_radial_fiber; i++) {
+      dq_radial[i] = calc_thickness_variation_rf(rf_array[i]) * time_step;
+    }
+    // 外周ファイバー 直接太さを更新
+    for (int i=0; i<num_peripheral_fiber; i++) {
+      // 外周ファイバーの両端粒子につながる動径ファイバー2本を探す
+      std::vector<Fiber> connected = find_connected_radial_fibers(pf_array[i], rf_array);
+      pf_array[i].thickness = calc_thickness_pf(connected[0], connected[1]);
+    }
+    // 動径ファイバー太さ更新
+    for(int i=0; i<num_radial_fiber; i++){
+      rf_array[i].thickness = rf_array[i].thickness + dq_radial[i];
     }
 
-    cp_array[0].position = Vector2D::add(cp_array[0].position , dc); //中心粒子の移動
+    // 5. 運動方程式と座標rの更新
+    Vector2D dr_center = Vector2D::multiple(cp_array[0].force.total(), time_step/viscous_gamma);
+    Vector2D dr_peripheral[particle_num];
     for(int i=0; i<particle_num; i++){
-      pp_array[i].position = Vector2D::add(pp_array[i].position , dr[i]); //外周粒子の移動
+      dr_peripheral[i] = Vector2D::multiple(pp_array[i].force.total(), time_step/viscous_gamma);
+    }
+
+    cp_array[0].position = Vector2D::add(cp_array[0].position , dr_center); //中心粒子の移動
+    for(int i=0; i<particle_num; i++){
+      pp_array[i].position = Vector2D::add(pp_array[i].position , dr_peripheral[i]); //外周粒子の移動
     }
 
     // ファイバー（赤）描画

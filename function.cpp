@@ -56,7 +56,7 @@ void set_regular_hexagon(
   }
 }
 
-// 各ファイバーそれぞれで力を計算する(ファイバー両端の粒子それぞれに対応した力のペア)
+// 各ファイバーそれぞれで力を計算する
 
 // 収縮力(動径方向)
 Vector2D calc_contraction_force_rf(const Fiber& f) {
@@ -157,8 +157,45 @@ void add_peripheral_forces (const Fiber& f) {
 // ここからファイバーの成長に関する関数
 // 動径ファイバーのdq/dtを計算する ここでは1ファイバーに対して計算
 double calc_thickness_variation_rf(const Fiber& f) {
+  Vector2D fiber = Vector2D::subtract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
 
-  // u(G)の計算
-  return 0;
+  // 粒子を中心に引く力G_i0の計算
+  Vector2D t_i = calc_contraction_force_rf(f); // 収縮力
+  Vector2D h_i = {0, 0}; // 復元力
+  if (fiber.length() > r0_r) h_i = calc_restoring_force_rf(f); // 自然長より長いなら復元力が働く
+  double g_i = Vector2D::add(t_i, h_i).length();
 
+  // 成長項u(G)の計算
+  double u_g = u_hat * std::pow((g_i/g_h),coop_mu) / (1 + std::pow((g_i/g_h),coop_mu));
+
+  // 分解項とあわせて計算
+  double dqdt = u_g - damping_coefficient * (f.thickness - q_min);
+
+  return dqdt;
+}
+
+// 両端粒子につながる動径ファイバー2つから、外周ファイバーの太さを計算する
+double calc_thickness_pf(const Fiber& f1, const Fiber& f2) {
+  // 両端ファイバー太さの平均
+  double q_bar = (f1.thickness + f2.thickness)/2;
+
+  // 外周ファイバーの太さ
+  double q_ij = q_hat_p * std::pow((q_bar/q_h),coop_xi) / (1 + std::pow((q_bar/q_h),coop_xi));
+  return q_ij;
+}
+
+// 外周ファイバーの両端粒子につながる動径ファイバー2本を探す
+std::vector<Fiber> find_connected_radial_fibers(
+  const Fiber& pf,
+  const std::vector<Fiber>& rf_array
+) {
+  std::vector<Fiber> connected_fiber;
+  Particle* p1 = pf.particle1;
+  Particle* p2 = pf.particle2;
+  for (int i=0; i<num_radial_fiber; i++) {
+    if (rf_array[i].particle1 == p1 || rf_array[i].particle2 == p1 || rf_array[i].particle1 == p2 || rf_array[i].particle2 == p2) {
+      connected_fiber.push_back(rf_array[i]);
+    }
+  }
+  return connected_fiber;
 }

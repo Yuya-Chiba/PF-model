@@ -34,8 +34,12 @@ void add_radial_forces (const Fiber& f); // 動径
 void add_peripheral_forces (const Fiber& f); // 外周
 
 // ここからファイバーの成長に関する関数
-// 動径ファイバーのdq/dtを計算する
-double calc_thickness_variation_rf(const Fiber& f);
-
+double calc_thickness_variation_rf(const Fiber& f); // 動径ファイバーのdq/dtを計算する
+double calc_thickness_pf(const Fiber& f1, const Fiber& f2); // 両端粒子につながる動径ファイバー2つから、外周ファイバーの太さを計算する
+// 外周ファイバーの両端粒子につながる動径ファイバー2本を探す
+std::vector<Fiber> find_connected_radial_fibers(
+    const Fiber& pf,
+    const std::vector<Fiber>& rf_array
+);
 
 #endif
