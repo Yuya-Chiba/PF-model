@@ -56,101 +56,146 @@ void set_regular_hexagon(
   }
 }
 
-
-// 各ファイバーそれぞれで力を計算し、両端の粒子に力(ベクトル)を足し合わせる
+// 各ファイバーそれぞれで力を計算する
 
 // 収縮力(動径方向)
-void calc_contraction_force_rf(const std::vector<Fiber>& fiber_array) {
-  for (int i = 0; i < fiber_array.size(); i++) {
-    Fiber f = fiber_array[i];
-    
-    Vector2D v; // ベクトル計算用、実際に値が入るわけではない
-    Vector2D fiber = v.substract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
-    Vector2D fiber_norm = v.normalize(fiber); // 単位ベクトルe
-    double fiber_length = fiber.length();
+Vector2D calc_contraction_force_rf(const Fiber& f) {
+  Vector2D fiber = Vector2D::subtract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
+  Vector2D fiber_norm = Vector2D::normalize(fiber); // 単位ベクトルe
+  double fiber_length = fiber.length();
 
-    // 計算部分
-    Vector2D rt;
-    rt = v.multiple(fiber_norm, f.thickness*w_r);
-    (*f.particle1).force = v.add((*f.particle1).force, v.oppo(rt));
-    (*f.particle2).force = v.add((*f.particle2).force, rt);
-  }
+  // 計算部分
+  Vector2D rt;
+  rt = Vector2D::multiple(fiber_norm, f.thickness*w_r);
+  return rt;
 }
 // 収縮力(外周方向)
-void calc_contraction_force_pf(const std::vector<Fiber>& fiber_array) {
-  for (int i = 0; i < fiber_array.size(); i++) {
-    Fiber f = fiber_array[i];
-    
-    Vector2D v; // ベクトル計算用、実際に値が入るわけではない
-    Vector2D fiber = v.substract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
-    Vector2D fiber_norm = v.normalize(fiber); // 単位ベクトルe
-    double fiber_length = fiber.length();
+Vector2D calc_contraction_force_pf(const Fiber& f) {    
+  Vector2D fiber = Vector2D::subtract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
+  Vector2D fiber_norm = Vector2D::normalize(fiber); // 単位ベクトルe
+  double fiber_length = fiber.length();
 
-    // 計算部分
-    Vector2D rt;
-    rt = v.multiple(fiber_norm, f.thickness*w_p);
-    (*f.particle1).force = v.add((*f.particle1).force, v.oppo(rt));
-    (*f.particle2).force = v.add((*f.particle2).force, rt);
-  }
+  // 計算部分
+  Vector2D rt;
+  rt = Vector2D::multiple(fiber_norm, f.thickness*w_p);
+  return rt;
 }
 
 // 復元力(動径方向)
-void calc_restoring_force_rf(const std::vector<Fiber>& fiber_array) {
-  for (int i = 0; i < fiber_array.size(); i++) {
-    Fiber f = fiber_array[i];
-    
-    Vector2D v; // ベクトル計算用、実際に値が入るわけではない
-    Vector2D fiber = v.substract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
-    Vector2D fiber_norm = v.normalize(fiber); // 単位ベクトルe
-    double fiber_length = fiber.length();
+Vector2D calc_restoring_force_rf(const Fiber& f) {    
+  Vector2D fiber = Vector2D::subtract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
+  Vector2D fiber_norm = Vector2D::normalize(fiber); // 単位ベクトルe
+  double fiber_length = fiber.length();
 
-    // 計算部分
-    Vector2D rf;
-    if (fiber_length > r0_r) {
-      rf = v.multiple(fiber_norm, k_r_plus*(fiber_length - r0_r));
-    } else {
-      rf = v.multiple(fiber_norm, k_r_minus*(fiber_length - r0_r));
-    }
-    (*f.particle1).force = v.add((*f.particle1).force, v.oppo(rf));
-    (*f.particle2).force = v.add((*f.particle2).force, rf);
+  // 計算部分
+  Vector2D rf;
+  if (fiber_length > r0_r) {
+    rf = Vector2D::multiple(fiber_norm, k_r_plus*(fiber_length - r0_r));
+  } else {
+    rf = Vector2D::multiple(fiber_norm, k_r_minus*(fiber_length - r0_r));
   }
+  return rf;
 }
 // 復元力(外周方向)
-void calc_restoring_force_pf(const std::vector<Fiber>& fiber_array) {
-  for (int i = 0; i < fiber_array.size(); i++) {
-    Fiber f = fiber_array[i];
-    
-    Vector2D v; // ベクトル計算用、実際に値が入るわけではない
-    Vector2D fiber = v.substract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
-    Vector2D fiber_norm = v.normalize(fiber); // 単位ベクトルe
-    double fiber_length = fiber.length();
+Vector2D calc_restoring_force_pf(const Fiber& f) {    
+  Vector2D fiber = Vector2D::subtract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
+  Vector2D fiber_norm = Vector2D::normalize(fiber); // 単位ベクトルe
+  double fiber_length = fiber.length();
 
-    // 計算部分
-    Vector2D rf;
-    if (fiber_length > r0_p) {
-      rf = v.multiple(fiber_norm, k_p_plus*(fiber_length - r0_p));
-    } else {
-      rf = v.multiple(fiber_norm, k_p_minus*(fiber_length - r0_p));
-    }
-    (*f.particle1).force = v.add((*f.particle1).force, v.oppo(rf));
-    (*f.particle2).force = v.add((*f.particle2).force, rf);
+  // 計算部分
+  Vector2D rf;
+  if (fiber_length > r0_p) {
+    rf = Vector2D::multiple(fiber_norm, k_p_plus*(fiber_length - r0_p));
+  } else {
+    rf = Vector2D::multiple(fiber_norm, k_p_minus*(fiber_length - r0_p));
   }
+  return rf;
 }
 
 // 伸展力を計算する 動径方向のみ
-void calc_extension_force(const std::vector<Fiber>& fiber_array) {
-  for (int i = 0; i < fiber_array.size(); i++) {
-    Fiber f = fiber_array[i];
-    
-    Vector2D v; // ベクトル計算用、実際に値が入るわけではない
-    Vector2D fiber = v.substract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
-    Vector2D fiber_norm = v.normalize(fiber); // 単位ベクトルe
-    double fiber_length = fiber.length();
+Vector2D calc_extension_force(const Fiber& f) {
+  Vector2D fiber = Vector2D::subtract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
+  Vector2D fiber_norm = Vector2D::normalize(fiber); // 単位ベクトルe
+  double fiber_length = fiber.length();
 
-    // 計算部分
-    Vector2D rt;
-    rt = v.multiple(fiber_norm, -f.thickness*c_r);
-    (*f.particle1).force = v.add((*f.particle1).force, v.oppo(rt));
-    (*f.particle2).force = v.add((*f.particle2).force, rt);
+  // 計算部分
+  Vector2D rt;
+  rt = Vector2D::multiple(fiber_norm, -f.thickness*c_r);
+  return rt;
+}
+
+// ファイバーについて計算した力を、その両端の粒子に足す
+// 動径方向
+void add_radial_forces (const Fiber& f) {
+  Vector2D restoring_force = calc_restoring_force_rf(f);
+  Vector2D contraction_force = calc_contraction_force_rf(f);
+  Vector2D extension_force = calc_extension_force(f);
+
+  // 両端粒子にそれぞれ対称な力を加える p1_forceなどは&を使って直接参照する
+  Force& force_p1 = (*f.particle1).force;
+  Force& force_p2 = (*f.particle2).force;
+  force_p1.restoring_radial = Vector2D::add(force_p1.restoring_radial, Vector2D::oppo(restoring_force));
+  force_p2.restoring_radial = Vector2D::add(force_p2.restoring_radial, restoring_force);
+  force_p1.contraction_radial = Vector2D::add(force_p1.contraction_radial, Vector2D::oppo(contraction_force));
+  force_p2.contraction_radial = Vector2D::add(force_p2.contraction_radial, contraction_force);
+  force_p1.extension_radial = Vector2D::add(force_p1.extension_radial, Vector2D::oppo(extension_force));
+  force_p2.extension_radial = Vector2D::add(force_p2.extension_radial, extension_force);
+}
+// 外周方向
+void add_peripheral_forces (const Fiber& f) {
+  Vector2D restoring_force = calc_restoring_force_pf(f);
+  Vector2D contraction_force = calc_contraction_force_pf(f);
+
+  // 両端粒子にそれぞれ対称な力を加える p1_forceなどは&を使って直接参照する
+  Force& force_p1 = (*f.particle1).force;
+  Force& force_p2 = (*f.particle2).force;
+  force_p1.restoring_peripheral = Vector2D::add(force_p1.restoring_peripheral, Vector2D::oppo(restoring_force));
+  force_p2.restoring_peripheral = Vector2D::add(force_p2.restoring_peripheral, restoring_force);
+  force_p1.contraction_peripheral = Vector2D::add(force_p1.contraction_peripheral, Vector2D::oppo(contraction_force));
+  force_p2.contraction_peripheral = Vector2D::add(force_p2.contraction_peripheral, contraction_force);
+}
+// ここからファイバーの成長に関する関数
+// 動径ファイバーのdq/dtを計算する ここでは1ファイバーに対して計算
+double calc_thickness_variation_rf(const Fiber& f) {
+  Vector2D fiber = Vector2D::subtract((*f.particle1).position, (*f.particle2).position); // ファイバーをベクトル表記に
+
+  // 粒子を中心に引く力G_i0の計算
+  Vector2D t_i = calc_contraction_force_rf(f); // 収縮力
+  Vector2D h_i = {0, 0}; // 復元力
+  if (fiber.length() > r0_r) h_i = calc_restoring_force_rf(f); // 自然長より長いなら復元力が働く
+  double g_i = Vector2D::add(t_i, h_i).length();
+
+  // 成長項u(G)の計算
+  double u_g = u_hat * std::pow((g_i/g_h),coop_mu) / (1 + std::pow((g_i/g_h),coop_mu));
+
+  // 分解項とあわせて計算
+  double dqdt = u_g - damping_coefficient * (f.thickness - q_min);
+
+  return dqdt;
+}
+
+// 両端粒子につながる動径ファイバー2つから、外周ファイバーの太さを計算する
+double calc_thickness_pf(const Fiber& f1, const Fiber& f2) {
+  // 両端ファイバー太さの平均
+  double q_bar = (f1.thickness + f2.thickness)/2;
+
+  // 外周ファイバーの太さ
+  double q_ij = q_hat_p * std::pow((q_bar/q_h),coop_xi) / (1 + std::pow((q_bar/q_h),coop_xi));
+  return q_ij;
+}
+
+// 外周ファイバーの両端粒子につながる動径ファイバー2本を探す
+std::vector<Fiber> find_connected_radial_fibers(
+  const Fiber& pf,
+  const std::vector<Fiber>& rf_array
+) {
+  std::vector<Fiber> connected_fiber;
+  Particle* p1 = pf.particle1;
+  Particle* p2 = pf.particle2;
+  for (int i=0; i<num_radial_fiber; i++) {
+    if (rf_array[i].particle1 == p1 || rf_array[i].particle2 == p1 || rf_array[i].particle1 == p2 || rf_array[i].particle2 == p2) {
+      connected_fiber.push_back(rf_array[i]);
+    }
   }
+  return connected_fiber;
 }

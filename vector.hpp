@@ -14,17 +14,17 @@ class Vector2D {
     // ベクトルのxy座標をsetする
     void set(double a, double b);
     // ベクトルの長さを求める
-    double length();
+    double length() const;
     // ベクトルの単位ベクトルを返す
-    Vector2D normalize(Vector2D p);
+    static Vector2D normalize(const Vector2D& p);
     // ベクトルの和
-    Vector2D add(Vector2D p, Vector2D q);
+    static Vector2D add(const Vector2D& p, const Vector2D& q);
     // ベクトルの差
-    Vector2D substract(Vector2D p, Vector2D q);
+    static Vector2D subtract(const Vector2D& p, const Vector2D& q);
     // ベクトルをn倍にする
-    Vector2D multiple(Vector2D p, double n);
+    static Vector2D multiple(const Vector2D& p, double n);
     // ベクトルを反対方向にする
-    Vector2D oppo(Vector2D p);
+    static Vector2D oppo(const Vector2D& p);
       
   };
 
