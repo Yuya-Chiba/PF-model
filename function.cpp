@@ -1,6 +1,19 @@
 #include "function.hpp"
 #include "parameter.hpp"
 
+// 開始値、終了値、刻み幅を指定して範囲内の離散的な乱数を返す メルセンヌ・ツイスター
+double random_value(double start, double end, double step) {
+  static std::mt19937 gen(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count()));
+
+  int num_steps = static_cast<int>(std::floor((end - start) / step)) + 1;
+  static std::uniform_int_distribution<int> dist; // 初期化しておくことで再利用できる
+
+  dist.param(std::uniform_int_distribution<int>::param_type(0, num_steps - 1));
+  int idx = dist(gen);
+
+  return start + step * idx;
+}
+
 // 初期配置メソッド
 // 2つのparticleを結んで1つのfiberを返す
 Fiber unit_particle(Particle& p1, Particle& p2, double fiber_thickness) {

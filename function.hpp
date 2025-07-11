@@ -3,10 +3,15 @@
 
 #include <cmath>
 #include <vector>
+#include <random>
+#include <chrono>
+#include <iostream>
 #include "particle.hpp"
 #include "fiber.hpp"
 #include "vector.hpp"
-#include <iostream>
+
+// 開始値、終了値、刻み幅を指定して範囲内の離散的な乱数を返す メルセンヌ・ツイスター
+double random_value(double start, double end, double step);
 
 // 初期配置メソッド
 // 2つのparticleを結んで1つのfiberを返す

@@ -10,19 +10,21 @@
 int main() {
     
   Drawer drawer;
-
   std::vector<Particle> cp_array; // 中心粒子の配列
   std::vector<Particle> pp_array; // 周辺粒子の配列
   std::vector<Fiber> rf_array; // 動径ファイバー
   std::vector<Fiber> pf_array; // 外周ファイバー
   int now_step = 0;
   bool image_save_flg = false;
-  std::string folder_path = "../result/only_force";
+  std::string folder_path = "../result/solution_trajectory";
   
-
-  // 初期座標のセット
+  // 粒子を初期座標にセット
   set_regular_hexagon(cp_array, pp_array, rf_array, pf_array);
   int particle_num = pp_array.size();
+  // (従来との変更点)動径ファイバーの太さに一定の幅でランダム性を持たせる
+  
+  // 動径ファイバー太さに基づいて外周ファイバーの太さを決定する
+
 
   while (true) {
     drawer.clear();
@@ -34,17 +36,11 @@ int main() {
     // 時間の計算
     double now_time = now_step * time_step;
 
-    //std::cerr << "particle: " << cp_array[0].get_x() << "," << cp_array[0].get_y() << std::endl;
-
     // 2. 働く力の計算
     // 動径方向の計算(中心粒子と周辺粒子)
-    for (int i = 0; i < num_radial_fiber; i++) {
-      add_radial_forces(rf_array[i]);
-    }
+    for (int i = 0; i < num_radial_fiber; i++) add_radial_forces(rf_array[i]);
     // 外周方向の計算
-    for (int i = 0; i < num_peripheral_fiber; i++) {
-      add_peripheral_forces(pf_array[i]);
-    }
+    for (int i = 0; i < num_peripheral_fiber; i++) add_peripheral_forces(pf_array[i]);
 
     // 3. 成長方程式と太さqの更新
     // 動径ファイバー 方程式
@@ -76,25 +72,18 @@ int main() {
     }
 
     // ファイバー（赤）描画
-    for(int i=0; i<rf_array.size(); i++){
-      drawer.draw_fiber(rf_array[i], cv::Scalar(0, 0, 255));
-    }
-    for(int i=0; i<pf_array.size(); i++){
-      drawer.draw_fiber(pf_array[i], cv::Scalar(0, 0, 255));
-    }
+    for(int i=0; i<rf_array.size(); i++) drawer.draw_fiber(rf_array[i], cv::Scalar(0, 0, 255));
+    for(int i=0; i<pf_array.size(); i++) drawer.draw_fiber(pf_array[i], cv::Scalar(0, 0, 255));
     // 粒子（緑）描画
-    for(int i=0; i<pp_array.size(); i++){
-      drawer.draw_particle(pp_array[i], cv::Scalar(0, 255, 0));
-    }
+    for(int i=0; i<pp_array.size(); i++) drawer.draw_particle(pp_array[i], cv::Scalar(0, 255, 0));
     drawer.draw_particle(cp_array[0], cv::Scalar(0, 255, 0));
     // パラメータ表示
     drawer.show_param(25, 50, 0.6, "Step: "+ std::to_string(now_time));
     drawer.show("PF-model");
 
     // 画像保存
-    if (int(now_time*10)%10 == 0 ) {
-      drawer.save_frame(image_save_flg, int(now_time), folder_path);
-    }
+    if (int(now_time*10)%10 == 0 ) drawer.save_frame(image_save_flg, int(now_time), folder_path);
+
     now_step ++;
 
     if (cv::waitKey(30) == 27 || now_time >= max_time) break; //window閉じたいときはescキー
