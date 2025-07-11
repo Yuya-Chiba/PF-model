@@ -21,7 +21,7 @@ int main() {
   // 粒子を初期座標にセット
   set_regular_hexagon(cp_array, pp_array, rf_array, pf_array);
   int particle_num = pp_array.size();
-  // (従来との変更点)動径ファイバーの太さに一定の幅でランダム性を持たせる
+  // (従来との変更点)動径ファイバーの太さを一定の範囲内で全パターン組み合わせを行う
   
   // 動径ファイバー太さに基づいて外周ファイバーの太さを決定する
 
