@@ -5,6 +5,7 @@
 #include <filesystem>
 #include "particle.hpp"
 #include "fiber.hpp"
+#include "parameter.hpp"
 
 class Drawer {
 private:

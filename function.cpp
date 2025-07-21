@@ -1,6 +1,40 @@
 #include "function.hpp"
 #include "parameter.hpp"
 
+std::vector<std::array<double, 6>> read_thickness_patterns_from_csv(const std::string& filepath) {
+  std::vector<std::array<double, 6>> patterns;
+  std::ifstream file(filepath);
+  
+  if (!file.is_open()) {
+    std::cerr << "Error: CSV ファイルが開けませんでした: " << filepath << std::endl;
+    return patterns;
+  }
+
+  std::string line;
+  while (std::getline(file, line)) {
+    std::istringstream ss(line);
+    std::array<double, 6> pattern;
+    std::string value;
+    int i = 0;
+
+    while (std::getline(ss, value, ',') && i < 6) {
+      try {
+        pattern[i++] = std::stod(value);
+      } catch (...) {
+        std::cerr << "数値変換エラー: " << value << std::endl;
+        break;
+      }
+    }
+
+    if (i == 6) {
+      patterns.push_back(pattern);
+    }
+  }
+
+  file.close();
+  return patterns;
+}
+
 // 初期配置メソッド
 // 2つのparticleを結んで1つのfiberを返す
 Fiber unit_particle(Particle& p1, Particle& p2, double fiber_thickness) {

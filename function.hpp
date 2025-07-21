@@ -3,10 +3,17 @@
 
 #include <cmath>
 #include <vector>
+#include <array>
+#include <string>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include "particle.hpp"
 #include "fiber.hpp"
 #include "vector.hpp"
+
+// 太さ全パターン列挙csvファイルを読み込む
+std::vector<std::array<double, 6>> read_thickness_patterns_from_csv(const std::string& filepath);
 
 // 初期配置メソッド
 // 2つのparticleを結んで1つのfiberを返す
