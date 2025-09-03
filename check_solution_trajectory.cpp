@@ -24,10 +24,11 @@ int main() {
   auto patterns = read_thickness_patterns_from_csv(file_path);
 
   // 全パターン(2635通り)についてシミュレーションを回す
-  // 条件として、全外周粒子の変位が1.0E-5以下になったときに定常とみなす
+  // 条件として、全外周粒子および動径ファイバーの太さの変位が1.0E-8以下になったときに定常とみなす
   for (const auto& pattern : patterns) {
 
     now_pattern++;
+    std::cout << "now_pattern: " << now_pattern << std::endl;
     cp_array.clear();
     pp_array.clear();
     rf_array.clear();
@@ -45,7 +46,7 @@ int main() {
       pf_array[i].thickness = calc_thickness_pf(connected[0], connected[1]);
     }
 
-    const double threshold = 1e-4; // 閾値
+    const double threshold = 1e-8; // 閾値
 
     // Step1. 初期配置を探す、ファイバー太さは固定して粒子位置だけ動かす
     int now_step = 0;
@@ -69,12 +70,17 @@ int main() {
       for (int i = 0; i < particle_num; i++) {
         Vector2D dr = Vector2D::multiple(pp_array[i].force.total(), time_step / viscous_gamma);
         pp_array[i].position = Vector2D::add(pp_array[i].position, dr); // 外周粒子
-        displacement.push_back(dr.length());
+
+        // 本stepでの変位を中心粒子に対する相対座標で記録する
+        Vector2D rel_displacement = Vector2D::subtract(dr, dr_center);
+        displacement.push_back(rel_displacement.x);
+        displacement.push_back(rel_displacement.y);
       }
 
       // 収束判定
-      bool converged = std::all_of(displacement.begin(), displacement.end(), [threshold](double d) { return d < threshold; });
+      bool converged = std::all_of(displacement.begin(), displacement.end(), [threshold](double d) { return (d > -threshold && d < threshold ); });
       if (converged) break;
+      if (now_step > 1000) break;
 
       // ファイバー（赤）描画
       for(int i=0; i<rf_array.size(); i++) drawer.draw_fiber(rf_array[i], cv::Scalar(0, 0, 255));
@@ -110,6 +116,7 @@ int main() {
       for (int i = 0; i < num_radial_fiber; i++) add_radial_forces(rf_array[i]); // 動径方向の計算(中心粒子と周辺粒子)
       for (int i = 0; i < num_peripheral_fiber; i++) add_peripheral_forces(pf_array[i]); // 外周方向の計算
 
+      std::vector<double> displacement;
       // 3. 成長方程式と太さqの更新
       
       // 動径ファイバー 方程式
@@ -120,6 +127,7 @@ int main() {
       // 動径ファイバー太さ更新
       for(int i=0; i<num_radial_fiber; i++){
         rf_array[i].thickness = rf_array[i].thickness + dq_radial[i];
+        displacement.push_back(dq_radial[i]);
       }
       // 外周ファイバー 直接太さを更新
       for (int i=0; i<num_peripheral_fiber; i++) {
@@ -131,16 +139,20 @@ int main() {
       Vector2D dr_center = Vector2D::multiple(cp_array[0].force.total(), time_step/viscous_gamma);
       cp_array[0].position = Vector2D::add(cp_array[0].position , dr_center); //中心粒子
 
-      std::vector<double> displacement;
       for (int i = 0; i < particle_num; i++) {
         Vector2D dr = Vector2D::multiple(pp_array[i].force.total(), time_step / viscous_gamma);
         pp_array[i].position = Vector2D::add(pp_array[i].position, dr); // 外周粒子
-        displacement.push_back(dr.length());
+        
+        // 本stepでの変位を中心粒子に対する相対座標で記録する
+        Vector2D rel_displacement = Vector2D::subtract(dr, dr_center);
+        displacement.push_back(rel_displacement.x);
+        displacement.push_back(rel_displacement.y);
       }
 
       // 収束判定
-      bool converged = std::all_of(displacement.begin(), displacement.end(), [threshold](double d) { return d < threshold; });
+      bool converged = std::all_of(displacement.begin(), displacement.end(), [threshold](double d) { return (d > -threshold && d < threshold ); });
       if (converged) break;
+      if (now_step > 1000) break;
 
       // ファイバー（赤）描画
       for(int i=0; i<rf_array.size(); i++) drawer.draw_fiber(rf_array[i], cv::Scalar(0, 0, 255));
