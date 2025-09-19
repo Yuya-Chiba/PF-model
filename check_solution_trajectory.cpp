@@ -46,12 +46,14 @@ int main() {
       pf_array[i].thickness = calc_thickness_pf(connected[0], connected[1]);
     }
 
-    const double threshold = 1e-8; // 閾値
+    const double threshold = 1e-4; // 閾値
+    std::vector<double> displacement; // 変位、収束判定に使用
 
     // Step1. 初期配置を探す、ファイバー太さは固定して粒子位置だけ動かす
     int now_step = 0;
     while (true) {
       drawer.clear();
+      displacement.clear();
       // 時間の計算
       double now_time = now_step * time_step;
       // 粒子にかかる力はリセットする
@@ -66,7 +68,6 @@ int main() {
       Vector2D dr_center = Vector2D::multiple(cp_array[0].force.total(), time_step/viscous_gamma);
       cp_array[0].position = Vector2D::add(cp_array[0].position , dr_center); //中心粒子
 
-      std::vector<double> displacement;
       for (int i = 0; i < particle_num; i++) {
         Vector2D dr = Vector2D::multiple(pp_array[i].force.total(), time_step / viscous_gamma);
         pp_array[i].position = Vector2D::add(pp_array[i].position, dr); // 外周粒子
@@ -97,7 +98,7 @@ int main() {
       if (cv::waitKey(30) == 27 || now_time >= max_time) {
         esc_pressed = true;
         break; //window閉じたいときはescキー
-      }     
+      }
     }
     if (esc_pressed) break;
 
@@ -105,6 +106,7 @@ int main() {
     now_step = 0;
     while (true) {
       drawer.clear();
+      displacement.clear();
       // 時間の計算
       double now_time = now_step * time_step;
 
@@ -116,7 +118,6 @@ int main() {
       for (int i = 0; i < num_radial_fiber; i++) add_radial_forces(rf_array[i]); // 動径方向の計算(中心粒子と周辺粒子)
       for (int i = 0; i < num_peripheral_fiber; i++) add_peripheral_forces(pf_array[i]); // 外周方向の計算
 
-      std::vector<double> displacement;
       // 3. 成長方程式と太さqの更新
       
       // 動径ファイバー 方程式
