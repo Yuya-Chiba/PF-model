@@ -34,13 +34,13 @@ int main() {
     rf_array.clear();
     pf_array.clear();
     // 粒子を初期座標にセット
-    set_regular_hexagon(cp_array, pp_array, rf_array, pf_array);
-    int particle_num = pp_array.size();
+    Eigen::Array<double, num_outer_particle, 2> outer_particle_positions = set_init_outer_particle();
+    
     
     // 動径ファイバー太さ決定
     for (int i = 0; i < num_radial_fiber; i++) rf_array[i].thickness = pattern[i];
     // 動径ファイバー太さに基づいて外周ファイバーの太さ決定
-    for (int i=0; i<num_peripheral_fiber; i++) {
+    for (int i=0; i<num_outer_fiber; i++) {
       std::vector<Fiber> connected = find_connected_radial_fibers(pf_array[i], rf_array);
       // std::cout << "thickness: " << rf_array[i].thickness << std::endl;
       pf_array[i].thickness = calc_thickness_pf(connected[0], connected[1]);
@@ -50,25 +50,24 @@ int main() {
     std::vector<double> displacement; // 変位、収束判定に使用
 
     // Step1. 初期配置を探す、ファイバー太さは固定して粒子位置だけ動かす
-    int now_step = 0;
+    int step = 0;
     while (true) {
       drawer.clear();
       displacement.clear();
-      // 時間の計算
-      double now_time = now_step * time_step;
+      
       // 粒子にかかる力はリセットする
-      for(int i=0; i<particle_num; i++) pp_array[i].force.clear();
+      for(int i=0; i<num_outer_particle; i++) pp_array[i].force.clear();
       cp_array[0].force.clear();
 
       // 働く力の計算
       for (int i = 0; i < num_radial_fiber; i++) add_radial_forces(rf_array[i]); // 動径方向の計算(中心粒子と周辺粒子)
-      for (int i = 0; i < num_peripheral_fiber; i++) add_peripheral_forces(pf_array[i]); // 外周方向の計算
+      for (int i = 0; i < num_outer_fiber; i++) add_peripheral_forces(pf_array[i]); // 外周方向の計算
 
       // 運動方程式, 座標rの更新
       Vector2D dr_center = Vector2D::multiple(cp_array[0].force.total(), time_step/viscous_gamma);
       cp_array[0].position = Vector2D::add(cp_array[0].position , dr_center); //中心粒子
 
-      for (int i = 0; i < particle_num; i++) {
+      for (int i = 0; i < num_outer_particle; i++) {
         Vector2D dr = Vector2D::multiple(pp_array[i].force.total(), time_step / viscous_gamma);
         pp_array[i].position = Vector2D::add(pp_array[i].position, dr); // 外周粒子
 
@@ -81,7 +80,7 @@ int main() {
       // 収束判定
       bool converged = std::all_of(displacement.begin(), displacement.end(), [threshold](double d) { return (d > -threshold && d < threshold ); });
       if (converged) break;
-      if (now_step > 1000) break;
+      if (step > 1000) break;
 
       // ファイバー（赤）描画
       for(int i=0; i<rf_array.size(); i++) drawer.draw_fiber(rf_array[i], cv::Scalar(0, 0, 255));
@@ -90,12 +89,12 @@ int main() {
       for(int i=0; i<pp_array.size(); i++) drawer.draw_particle(pp_array[i], cv::Scalar(0, 255, 0));
       drawer.draw_particle(cp_array[0], cv::Scalar(0, 255, 0));
       // パラメータ表示
-      drawer.show_param(25, 50, 0.6, "Pattern " + std::to_string(now_pattern) + "/" + std::to_string(patterns.size()) + ", Phase: 1, Step: "+ std::to_string(now_time));
+      drawer.show_param(25, 50, 0.6, "Pattern " + std::to_string(now_pattern) + "/" + std::to_string(patterns.size()) + ", Phase: 1, Step: "+ std::to_string(step));
       drawer.show("PF-model");
       // 画像保存
-      if (int(now_time*10)%10 == 0 ) drawer.save_frame(image_save_flg, int(now_time), folder_path);
-      now_step ++;
-      if (cv::waitKey(30) == 27 || now_time >= max_time) {
+      if (int(step*10)%10 == 0 ) drawer.save_frame(image_save_flg, int(step), folder_path);
+      step ++;
+      if (cv::waitKey(30) == 27 || step >= max_step) {
         esc_pressed = true;
         break; //window閉じたいときはescキー
       }
@@ -103,20 +102,19 @@ int main() {
     if (esc_pressed) break;
 
     // Step2. 定常状態を探す、運動方程式と成長方程式どちらも使用
-    now_step = 0;
+    step = 0;
     while (true) {
       drawer.clear();
       displacement.clear();
-      // 時間の計算
-      double now_time = now_step * time_step;
+      
 
       // 粒子にかかる力はリセットする
-      for(int i=0; i<particle_num; i++) pp_array[i].force.clear();
+      for(int i=0; i<num_outer_particle; i++) pp_array[i].force.clear();
       cp_array[0].force.clear();
 
       // 働く力の計算
       for (int i = 0; i < num_radial_fiber; i++) add_radial_forces(rf_array[i]); // 動径方向の計算(中心粒子と周辺粒子)
-      for (int i = 0; i < num_peripheral_fiber; i++) add_peripheral_forces(pf_array[i]); // 外周方向の計算
+      for (int i = 0; i < num_outer_fiber; i++) add_peripheral_forces(pf_array[i]); // 外周方向の計算
 
       // 3. 成長方程式と太さqの更新
       
@@ -131,7 +129,7 @@ int main() {
         displacement.push_back(dq_radial[i]);
       }
       // 外周ファイバー 直接太さを更新
-      for (int i=0; i<num_peripheral_fiber; i++) {
+      for (int i=0; i<num_outer_fiber; i++) {
         std::vector<Fiber> connected = find_connected_radial_fibers(pf_array[i], rf_array);
         pf_array[i].thickness = calc_thickness_pf(connected[0], connected[1]);
       }
@@ -140,7 +138,7 @@ int main() {
       Vector2D dr_center = Vector2D::multiple(cp_array[0].force.total(), time_step/viscous_gamma);
       cp_array[0].position = Vector2D::add(cp_array[0].position , dr_center); //中心粒子
 
-      for (int i = 0; i < particle_num; i++) {
+      for (int i = 0; i < num_outer_particle; i++) {
         Vector2D dr = Vector2D::multiple(pp_array[i].force.total(), time_step / viscous_gamma);
         pp_array[i].position = Vector2D::add(pp_array[i].position, dr); // 外周粒子
         
@@ -153,7 +151,7 @@ int main() {
       // 収束判定
       bool converged = std::all_of(displacement.begin(), displacement.end(), [threshold](double d) { return (d > -threshold && d < threshold ); });
       if (converged) break;
-      if (now_step > 1000) break;
+      if (step > 1000) break;
 
       // ファイバー（赤）描画
       for(int i=0; i<rf_array.size(); i++) drawer.draw_fiber(rf_array[i], cv::Scalar(0, 0, 255));
@@ -162,12 +160,12 @@ int main() {
       for(int i=0; i<pp_array.size(); i++) drawer.draw_particle(pp_array[i], cv::Scalar(0, 255, 0));
       drawer.draw_particle(cp_array[0], cv::Scalar(0, 255, 0));
       // パラメータ表示
-      drawer.show_param(25, 50, 0.6, "Pattern " + std::to_string(now_pattern) + "/" + std::to_string(patterns.size()) + ", Phase: 2, Step: "+ std::to_string(now_time));
+      drawer.show_param(25, 50, 0.6, "Pattern " + std::to_string(now_pattern) + "/" + std::to_string(patterns.size()) + ", Phase: 2, Step: "+ std::to_string(step));
       drawer.show("PF-model");
       // 画像保存
-      if (int(now_time*10)%10 == 0 ) drawer.save_frame(image_save_flg, int(now_time), folder_path);
-      now_step ++;
-      if (cv::waitKey(30) == 27 || now_time >= max_time) {
+      if (int(step*10)%10 == 0 ) drawer.save_frame(image_save_flg, int(step), folder_path);
+      step ++;
+      if (cv::waitKey(30) == 27 || step >= max_step) {
         esc_pressed = true;
         break; //window閉じたいときはescキー
       }

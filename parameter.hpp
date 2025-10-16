@@ -1,22 +1,22 @@
 #ifndef PARAMETER_HPP
 #define PARAMETER_HPP
 
-#include <cmath>
+#include "lib.cpp"
 
 // パラメータはここに記載する inline constexprで重複なし定義ができる
 
 // 各粒子とファイバーの数
 inline constexpr int num_center_particle = 1; //中心粒子
-inline constexpr int num_peripheral_particle = 6; //周辺粒子
+inline constexpr int num_outer_particle = 6; //周辺粒子
 inline constexpr int num_radial_fiber = 6; //動径ファイバー
-inline constexpr int num_peripheral_fiber = 6; //外周ファイバー
-inline constexpr double time_step = 0.1;
+inline constexpr int num_outer_fiber = 6; //外周ファイバー
 
 // ファイバーの初期値関連
-inline constexpr double r0_r = 14; // 動径ファイバー自然長
-inline constexpr double r0_p = 2*r0_r*sin(M_PI/num_peripheral_particle); // 外周ファイバー自然長
+inline constexpr double init_rf_length = 14; // 動径ファイバー自然長
+inline constexpr double angle = 2 * M_PI / num_outer_particle; // 動径ファイバー間角度
+inline constexpr double init_of_length = 2 * init_rf_length * sin(angle/2); // 外周ファイバー自然長
 inline constexpr double init_rf_thickness = 1; // 動径ファイバー初期太さ
-inline constexpr double init_pf_thickness = 1; // 外周ファイバー初期太さ
+inline constexpr double init_of_thickness = 1; // 外周ファイバー初期太さ
 
 // 運動方程式、力関連
 inline constexpr double viscous_gamma = 10; // 粘性抵抗係数
@@ -40,6 +40,7 @@ inline constexpr double coop_xi = 20; // 外周ファイバー成長式の協同
 
 //　描画関連(modelの挙動に関係しない)
 inline constexpr double init_particle_radius = 2; // 粒子の初期大きさ(接着かどうかで変わる、変更予定)
-inline constexpr double max_time = 10000; // 最大シミュレーション時間
+inline constexpr int max_step = 30000; // 最大シミュレーション時間
+inline constexpr double time_step = 0.1;
 
 #endif

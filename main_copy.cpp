@@ -1,0 +1,111 @@
+#include "draw.hpp"
+#include "function.hpp"
+#include "parameter.hpp"
+
+int main() {
+  // 粒子、ファイバー関連の宣言・初期化
+  // 計算で使用する変数（高速化のためEigenを使用）
+  Eigen::Array<double, num_center_particle, 2> center_particle_positions; // 中心粒子位置
+  center_particle_positions.setZero();
+  Eigen::Array<double, num_outer_particle, 2> outer_particle_positions = set_init_outer_particle(); // 周辺粒子位置
+  Eigen::Array<double, num_radial_fiber, 1> radial_fiber_thicknesses; // 動径ファイバー太さ
+  for (int i=0; i<num_radial_fiber; i++) radial_fiber_thicknesses(i,0) = init_rf_thickness;
+  Eigen::Array<double, num_outer_fiber, 1> outer_fiber_thicknesses; // 外周ファイバー太さ
+  for (int i=0; i<num_outer_fiber; i++) outer_fiber_thicknesses(i,0) = init_of_thickness;
+  Eigen::Array<double, num_center_particle, 2> center_particle_forces; // 中心粒子に働く力
+  Eigen::Array<double, num_outer_particle, 2> outer_particle_forces; // 周辺粒子に働く力
+  // 粒子とファイバーの接続情報 複数細胞用に拡張可能
+  std::vector<std::pair<int, int>> outer_fiber_to_particles = {
+    {0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 0} };
+
+  // 描画・ファイル保存用設定
+  bool draw_flg = false;
+  bool image_save_flg = false;
+  std::string folder_path = "../result/only_force";
+
+  Drawer drawer;
+  int step = 1;
+  while (step <= max_step) {
+    if (cv::waitKey(30) == 27 || step >= max_step) break; // 実行停止時はescキー
+    drawer.clear();
+
+    // 粒子にかかる力をリセットする
+    center_particle_forces.setZero();
+    outer_particle_forces.setZero();
+
+    std::cerr << "particle: " << center_particle_positions(0,0) << "," << center_particle_positions(0,1) << std::endl;
+
+    // 2. 働く力の計算
+    // 動径方向の計算(中心粒子と周辺粒子)
+    for (int i = 0; i < num_radial_fiber; i++) {
+      center_particle_forces -= calc_contraction_force_rf(center_particle_positions, outer_particle_positions.row(i), radial_fiber_thicknesses(i,0));
+      outer_particle_forces.row(i) += calc_contraction_force_rf(center_particle_positions, outer_particle_positions.row(i), radial_fiber_thicknesses(i,0));
+      center_particle_forces -= calc_restoring_force_rf(center_particle_positions, outer_particle_positions.row(i));
+      outer_particle_forces.row(i) += calc_restoring_force_rf(center_particle_positions, outer_particle_positions.row(i));
+      outer_particle_forces.row(i) += calc_extension_force(center_particle_positions, outer_particle_positions.row(i), radial_fiber_thicknesses(i,0)); // 伸展力は外周粒子のみ
+    }
+    // 外周方向の計算
+    for (int i = 0; i < num_outer_fiber; i++) {
+      auto [p1, p2] = outer_fiber_to_particles[i]; // fiberと接続するparticleの番号
+      outer_particle_forces.row(p1) -= calc_contraction_force_of(outer_particle_positions.row(p1), outer_particle_positions.row(p2), outer_fiber_thicknesses(i,0));
+      outer_particle_forces.row(p2) += calc_contraction_force_of(outer_particle_positions.row(p1), outer_particle_positions.row(p2), outer_fiber_thicknesses(i,0));
+      outer_particle_forces.row(p1) -= calc_restoring_force_of(outer_particle_positions.row(p1), outer_particle_positions.row(p2));
+      outer_particle_forces.row(p2) += calc_restoring_force_of(outer_particle_positions.row(p1), outer_particle_positions.row(p2));
+    }
+
+    /*
+    // 3. 成長方程式と太さqの更新
+    // 動径ファイバー 方程式
+    double dq_radial[num_radial_fiber];
+    for (int i=0; i<num_radial_fiber; i++) {
+      dq_radial[i] = calc_thickness_variation_rf(rf_array[i]) * time_step;
+    }
+    // 外周ファイバー 直接太さを更新
+    for (int i=0; i<num_outer_fiber; i++) {
+      // 外周ファイバーの両端粒子につながる動径ファイバー2本を探す
+      std::vector<Fiber> connected = find_connected_radial_fibers(pf_array[i], rf_array);
+      pf_array[i].thickness = calc_thickness_pf(connected[0], connected[1]);
+    }
+    // 動径ファイバー太さ更新
+    for(int i=0; i<num_radial_fiber; i++){
+      rf_array[i].thickness = rf_array[i].thickness + dq_radial[i];
+    }
+    */
+
+    // 5. 運動方程式と座標rの更新
+    // 中心
+    auto dr_center = center_particle_forces * (1/viscous_gamma);
+    center_particle_positions += dr_center;
+    // 外周
+    for(int i=0; i<num_outer_particle; i++){
+      auto dr_outer = outer_particle_forces.row(i) * (1/viscous_gamma);
+      outer_particle_positions.row(i) += dr_outer;
+    }
+
+    // 6. 描画
+    // ファイバー（赤）
+    for(int i=0; i<num_radial_fiber; i++) {
+      drawer.draw_fiber(center_particle_positions, outer_particle_positions.row(i), radial_fiber_thicknesses(i,0), cv::Scalar(0, 0, 255));
+    }
+    for(int i=0; i<num_outer_fiber; i++) {
+      auto [p1, p2] = outer_fiber_to_particles[i];
+      drawer.draw_fiber(outer_particle_positions.row(p1), outer_particle_positions.row(p2), outer_fiber_thicknesses(i,0), cv::Scalar(0, 0, 255));
+    }
+    // 粒子（緑）
+    drawer.draw_particle(center_particle_positions, cv::Scalar(0, 255, 0));
+    for(int i=0; i<num_outer_particle; i++) drawer.draw_particle(outer_particle_positions.row(i), cv::Scalar(0, 255, 0));
+
+    // step表示
+    drawer.show_param(25, 50, 0.6, "Step: "+ std::to_string(step));
+    drawer.show("PF-model");
+
+    // 7. 画像保存
+    if (step % 10 == 0 ) {
+      drawer.save_frame(image_save_flg, int(step), folder_path);
+    }
+
+    step ++;
+  }
+
+  return 0;
+}
