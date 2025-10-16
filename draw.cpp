@@ -10,26 +10,26 @@ void Drawer::clear() {
   canvas = cv::Mat(height, width, CV_8UC3, cv::Scalar(255, 255, 255));
 }
 
-// 1粒子の描画
-void Drawer::draw_particle(const Eigen::Array<double, 1, 2>& particle_position, const cv::Scalar& color) {
+// 1粒子の描画(緑)
+void Drawer::draw_particle(const Eigen::Array<double, 1, 2>& particle_position) {
   cv::circle(
     canvas, 
     cv::Point2f(particle_position(0,0) * scale, particle_position(0,1) * scale) + origin_offset,
     init_particle_radius * scale,
-    color, 
+    cv::Scalar(0, 255, 0), 
     -1, 
     cv::LINE_AA
   );
 }
 
-// 1ファイバーの描画
+// 1ファイバーの描画(赤)
 // [注] 太さが1未満だと0に丸められて描画されるので、描画時だけ1を足す
-void Drawer::draw_fiber(const Eigen::Array<double, 1, 2>& p1_position, const Eigen::Array<double, 1, 2>& p2_position, const double thickness, const cv::Scalar& color) {
+void Drawer::draw_fiber(const Eigen::Array<double, 1, 2>& p1_position, const Eigen::Array<double, 1, 2>& p2_position, const double thickness) {
   cv::line(
     canvas, 
     cv::Point2f(p1_position(0,0) * scale, p1_position(0,1) * scale) + origin_offset,
     cv::Point2f(p2_position(0,0) * scale, p2_position(0,1) * scale) + origin_offset,
-    color, 
+    cv::Scalar(0, 0, 255), 
     (thickness * scale) + 1,
     cv::LINE_AA
   );

@@ -85,15 +85,15 @@ int main() {
     // 6. 描画
     // ファイバー（赤）
     for(int i=0; i<num_radial_fiber; i++) {
-      drawer.draw_fiber(center_particle_positions, outer_particle_positions.row(i), radial_fiber_thicknesses(i,0), cv::Scalar(0, 0, 255));
+      drawer.draw_fiber(center_particle_positions, outer_particle_positions.row(i), radial_fiber_thicknesses(i,0));
     }
     for(int i=0; i<num_outer_fiber; i++) {
       auto [p1, p2] = outer_fiber_to_particles[i];
-      drawer.draw_fiber(outer_particle_positions.row(p1), outer_particle_positions.row(p2), outer_fiber_thicknesses(i,0), cv::Scalar(0, 0, 255));
+      drawer.draw_fiber(outer_particle_positions.row(p1), outer_particle_positions.row(p2), outer_fiber_thicknesses(i,0));
     }
     // 粒子（緑）
-    drawer.draw_particle(center_particle_positions, cv::Scalar(0, 255, 0));
-    for(int i=0; i<num_outer_particle; i++) drawer.draw_particle(outer_particle_positions.row(i), cv::Scalar(0, 255, 0));
+    drawer.draw_particle(center_particle_positions);
+    for(int i=0; i<num_outer_particle; i++) drawer.draw_particle(outer_particle_positions.row(i));
 
     // step表示
     drawer.show_param(25, 50, 0.6, "Step: "+ std::to_string(step));
