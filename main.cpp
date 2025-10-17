@@ -26,14 +26,13 @@ int main() {
   Drawer drawer;
   int step = 1;
   while (step <= max_step) {
-    if (cv::waitKey(30) == 27 || step >= max_step) break; // 実行停止時はescキー
     drawer.clear();
 
     // 粒子にかかる力をリセットする
     center_particle_forces.setZero();
     outer_particle_forces.setZero();
 
-    std::cerr << "particle: " << center_particle_positions(0,0) << "," << center_particle_positions(0,1) << std::endl;
+    std::cout << "Step: " << step << std::endl;
 
     // 2. 働く力の計算
     // 動径方向の計算(中心粒子と周辺粒子)
@@ -53,32 +52,25 @@ int main() {
       outer_particle_forces.row(p2) += calc_restoring_force_of(outer_particle_positions.row(p1), outer_particle_positions.row(p2));
     }
 
-    /*
     // 3. 成長方程式と太さqの更新
     // 動径ファイバー 方程式
-    double dq_radial[num_radial_fiber];
     for (int i=0; i<num_radial_fiber; i++) {
-      dq_radial[i] = calc_thickness_variation_rf(rf_array[i]) * time_step;
+      double dq_radial = calc_thickness_variation_rf(center_particle_positions, outer_particle_positions.row(i), radial_fiber_thicknesses(i,0)) * delta_t;
+      radial_fiber_thicknesses(i,0) += dq_radial;
     }
     // 外周ファイバー 直接太さを更新
     for (int i=0; i<num_outer_fiber; i++) {
-      // 外周ファイバーの両端粒子につながる動径ファイバー2本を探す
-      std::vector<Fiber> connected = find_connected_radial_fibers(pf_array[i], rf_array);
-      pf_array[i].thickness = calc_thickness_pf(connected[0], connected[1]);
+      auto [p1, p2] = outer_fiber_to_particles[i]; // outer_fiberと接続するparticleの番号, 1細胞ではこれがradial_fiber番号と一致
+      outer_fiber_thicknesses(i,0) = calc_thickness_of(radial_fiber_thicknesses(p1,0), radial_fiber_thicknesses(p2,0));
     }
-    // 動径ファイバー太さ更新
-    for(int i=0; i<num_radial_fiber; i++){
-      rf_array[i].thickness = rf_array[i].thickness + dq_radial[i];
-    }
-    */
 
     // 5. 運動方程式と座標rの更新
     // 中心
-    auto dr_center = center_particle_forces * (1/viscous_gamma);
+    auto dr_center = center_particle_forces * (delta_t/viscous_gamma);
     center_particle_positions += dr_center;
     // 外周
     for(int i=0; i<num_outer_particle; i++){
-      auto dr_outer = outer_particle_forces.row(i) * (1/viscous_gamma);
+      auto dr_outer = outer_particle_forces.row(i) * (delta_t/viscous_gamma);
       outer_particle_positions.row(i) += dr_outer;
     }
 

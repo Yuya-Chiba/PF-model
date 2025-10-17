@@ -16,7 +16,7 @@ public:
     void draw_particle(const Eigen::Array<double, 1, 2>& particle_position);
     void draw_fiber(const Eigen::Array<double, 1, 2>& p1_position, const Eigen::Array<double, 1, 2>& p2_position, const double thickness);
     void show_param(double x1, double y1, double size, std::string str);
-    void show(const std::string& window_name = "PF-model", int delay = 30);
+    void show(const std::string& window_name = "PF-model", int delay = 1);
     void save_frame(bool image_save_flg, int frame_number, const std::string& folder_path);
 };
 

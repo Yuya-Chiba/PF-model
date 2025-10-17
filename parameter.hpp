@@ -41,6 +41,6 @@ inline constexpr double coop_xi = 20; // 外周ファイバー成長式の協同
 //　描画関連(modelの挙動に関係しない)
 inline constexpr double init_particle_radius = 2; // 粒子の初期大きさ(接着かどうかで変わる、変更予定)
 inline constexpr int max_step = 30000; // 最大シミュレーション時間
-inline constexpr double time_step = 0.1;
+inline constexpr double delta_t = 0.1;
 
 #endif
