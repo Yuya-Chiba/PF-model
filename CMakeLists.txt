@@ -18,4 +18,6 @@ add_executable(PF_model main.cpp)
 target_link_libraries(PF_model common ${OpenCV_LIBS} Eigen3::Eigen)
 
 # 成長方程式までを導入して解軌道を調べる
-#add_executable(check_solution_trajectory.cpp)
+# step1: 太さ固定で初期値を決定する
+add_executable(Check_solution_trajectory check_trajectory_step1.cpp)
+target_link_libraries(Check_solution_trajectory common ${OpenCV_LIBS} Eigen3::Eigen)

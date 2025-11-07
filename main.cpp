@@ -69,10 +69,8 @@ int main() {
     auto dr_center = center_particle_forces * (delta_t/viscous_gamma);
     center_particle_positions += dr_center;
     // 外周
-    for(int i=0; i<num_outer_particle; i++){
-      auto dr_outer = outer_particle_forces.row(i) * (delta_t/viscous_gamma);
-      outer_particle_positions.row(i) += dr_outer;
-    }
+    auto dr_outer = outer_particle_forces * (delta_t/viscous_gamma);
+    outer_particle_positions += dr_outer;
 
     // 6. 描画
     // ファイバー（赤）
