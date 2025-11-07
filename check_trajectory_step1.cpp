@@ -1,6 +1,7 @@
-#include "draw.hpp"
-#include "function.hpp"
-#include "parameter.hpp"
+#include "common/draw.hpp"
+#include "common/equation.hpp"
+#include "common/function.hpp"
+#include "common/parameter.hpp"
 
 // Step1: 初期配置を探す、ファイバー太さは固定して粒子位置だけ動かす
 

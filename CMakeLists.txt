@@ -9,15 +9,15 @@ find_package(OpenCV REQUIRED)
 find_package (Eigen3 3.4 REQUIRED NO_MODULE)
 include_directories(${OpenCV_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIR})
 
-# 共通ライブラリ
-add_library(common lib.cpp draw.cpp function.cpp parameter.hpp)
+# 複数のプロジェクトで使用する共通処理をまとめる
+add_library(Common common/lib.cpp common/draw.cpp common/equation.cpp common/function.cpp common/parameter.hpp)
 
 # プロジェクト名と使用する言語を設定, 実行ファイルを作成
 # 1細胞PFモデル
 add_executable(PF_model main.cpp)
-target_link_libraries(PF_model common ${OpenCV_LIBS} Eigen3::Eigen)
+target_link_libraries(PF_model Common ${OpenCV_LIBS} Eigen3::Eigen)
 
 # 成長方程式までを導入して解軌道を調べる
 # step1: 太さ固定で初期値を決定する
 add_executable(Check_solution_trajectory check_trajectory_step1.cpp)
-target_link_libraries(Check_solution_trajectory common ${OpenCV_LIBS} Eigen3::Eigen)
+target_link_libraries(Check_solution_trajectory Common ${OpenCV_LIBS} Eigen3::Eigen)

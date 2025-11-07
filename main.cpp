@@ -1,6 +1,7 @@
-#include "draw.hpp"
-#include "function.hpp"
-#include "parameter.hpp"
+#include "common/draw.hpp"
+#include "common/equation.hpp"
+#include "common/function.hpp"
+#include "common/parameter.hpp"
 
 int main() {
   // 粒子、ファイバー関連の宣言・初期化
