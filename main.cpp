@@ -19,14 +19,14 @@ int main() {
     {0, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 0} };
 
   // 描画・ファイル保存用設定
-  bool draw_flg = false;
+  bool draw_flg = true;
   bool image_save_flg = false;
   std::string folder_path = "../result/only_force";
 
   Drawer drawer;
   int step = 1;
   while (step <= max_step) {
-    drawer.clear();
+    if (draw_flg) drawer.clear();
 
     // 粒子にかかる力をリセットする
     center_particle_forces.setZero();
@@ -73,21 +73,22 @@ int main() {
     outer_particle_positions += dr_outer;
 
     // 6. 描画
-    // ファイバー（赤）
-    for(int i=0; i<num_radial_fiber; i++) {
-      drawer.draw_fiber(center_particle_positions, outer_particle_positions.row(i), radial_fiber_thicknesses(i,0));
+    if (draw_flg) {
+      // ファイバー（赤）
+      for(int i=0; i<num_radial_fiber; i++) {
+        drawer.draw_fiber(center_particle_positions, outer_particle_positions.row(i), radial_fiber_thicknesses(i,0));
+      }
+      for(int i=0; i<num_outer_fiber; i++) {
+        auto [p1, p2] = outer_fiber_to_particles[i];
+        drawer.draw_fiber(outer_particle_positions.row(p1), outer_particle_positions.row(p2), outer_fiber_thicknesses(i,0));
+      }
+      // 粒子（緑）
+      drawer.draw_particle(center_particle_positions);
+      for(int i=0; i<num_outer_particle; i++) drawer.draw_particle(outer_particle_positions.row(i));
+      // step表示
+      drawer.show_param(25, 50, 0.6, "Step: "+ std::to_string(step));
+      drawer.show("PF-model");
     }
-    for(int i=0; i<num_outer_fiber; i++) {
-      auto [p1, p2] = outer_fiber_to_particles[i];
-      drawer.draw_fiber(outer_particle_positions.row(p1), outer_particle_positions.row(p2), outer_fiber_thicknesses(i,0));
-    }
-    // 粒子（緑）
-    drawer.draw_particle(center_particle_positions);
-    for(int i=0; i<num_outer_particle; i++) drawer.draw_particle(outer_particle_positions.row(i));
-
-    // step表示
-    drawer.show_param(25, 50, 0.6, "Step: "+ std::to_string(step));
-    drawer.show("PF-model");
 
     // 7. 画像保存
     if (step % 10 == 0 ) {
