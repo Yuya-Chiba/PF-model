@@ -22,7 +22,7 @@ int main() {
   // 描画・ファイル保存用設定
   bool draw_flg = true;
   bool image_save_flg = false;
-  std::string folder_path = "../result/only_force";
+  std::string folder_path = "../result/image";
 
   Drawer drawer;
   int step = 1;

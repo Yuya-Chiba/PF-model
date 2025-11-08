@@ -24,14 +24,16 @@ int main() {
   Drawer drawer;
   bool draw_flg = false;
   bool image_save_flg = false;
-  std::string folder_path = "../result/solution_trajectory";
+  std::string image_folder_path = "../result/image";
 
-  // (従来との変更点)動径ファイバーの太さを一定の範囲内で全パターン組み合わせを行う
-  std::string file_path = "./../source/thickness_patterns.csv";
-  auto patterns = read_thickness_patterns_from_csv(file_path);
+  // 入出力データ保存用設定
+  auto patterns = read_thickness_patterns_from_csv("./../source/thickness_patterns.csv"); // 太さパターン読み込み
+  std::filesystem::create_directories("../result/csv"); // フォルダ無い場合は作成
+  std::ofstream outputfile("../result/csv/solution_init.csv");
+  set_csv_header(outputfile); // 出力用ファイルヘッダー設定
 
-  // 全パターン(2635通り)についてシミュレーションを回す
-  // 条件として、全外周粒子および動径ファイバーの太さの変位が1.0E-8以下になったときに定常とみなす
+  // 全2635パターンについてシミュレーションを回す
+  // 条件として、全外周粒子および動径ファイバーの太さの変位が1.0E-5以下になったときに定常とみなす
   int now_pattern = 0;
   for (const auto& pattern : patterns) {
     now_pattern++;
@@ -89,8 +91,10 @@ int main() {
       }
       // 収束判定
       bool all_stable = (displacement.abs() < threshold).all();
-      if (all_stable) break;
-
+      if (all_stable || step >= 10000) {
+        write_to_csv(outputfile, center_particle_positions, outer_particle_positions, radial_fiber_thicknesses, outer_fiber_thicknesses);
+        break;
+      }
       // 6. 描画
       if (draw_flg) {
         // ファイバー（赤）
@@ -111,7 +115,7 @@ int main() {
 
       // 7. 画像保存
       if (step % 10 == 0 ) {
-        drawer.save_frame(image_save_flg, int(step), folder_path);
+        drawer.save_frame(image_save_flg, int(step), image_folder_path);
       }
 
       step ++;
