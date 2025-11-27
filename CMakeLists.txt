@@ -19,5 +19,8 @@ target_link_libraries(PF_model Common ${OpenCV_LIBS} Eigen3::Eigen)
 
 # 成長方程式までを導入して解軌道を調べる
 # step1: 太さ固定で初期値を決定する
-add_executable(Check_solution_trajectory check_trajectory_step1.cpp)
+add_executable(Check_init_position check_trajectory_step1.cpp)
+target_link_libraries(Check_init_position Common ${OpenCV_LIBS} Eigen3::Eigen)
+# step2: 初期値から平衡解までの軌跡を調べる
+add_executable(Check_solution_trajectory check_trajectory_step2.cpp)
 target_link_libraries(Check_solution_trajectory Common ${OpenCV_LIBS} Eigen3::Eigen)
