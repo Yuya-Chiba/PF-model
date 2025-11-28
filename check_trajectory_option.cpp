@@ -11,8 +11,8 @@ std::string classify_mode(const Eigen::Array<double, num_radial_fiber, 1>& radia
 
 int main() {
 
-  std::ifstream input_file("../result/csv/trajectory.csv"); // 入力用
-  std::ofstream output_file("../result/csv/trajectory_mode.csv"); // 出力用
+  std::ifstream input_file("../result/csv/equilibrium_solutions.csv"); // 入力用
+  std::ofstream output_file("../result/csv/equilibrium_solutions_mode.csv"); // 出力用
   output_file << "pattern,area,aspect_ratio,mode\n";
   std::string line;
   std::getline(input_file, line); // 1行目はヘッダーのためスキップ
@@ -63,19 +63,22 @@ double calc_area(const Eigen::Array<double, num_outer_particle, 2>& outer_partic
 
 // 粒子座標からアスペクト比を計算する
 double calc_aspect_ratio(const Eigen::Array<double, num_outer_particle, 2>& outer_particle_positions) {
-  double x_min = outer_particle_positions.col(0).minCoeff();
-  double x_max = outer_particle_positions.col(0).maxCoeff();
-  double y_min = outer_particle_positions.col(1).minCoeff();
-  double y_max = outer_particle_positions.col(1).maxCoeff();
-  double width = x_max - x_min;
-  double height = y_max - y_min;
-  // 長軸/短軸 0除算を防ぐ
-  if (height >= width && width != 0) {
-    return height/width;
-  } else if (height < width && height != 0) {
-    return width/height;
+  // 各粒子の重心をもとに中心化
+  double mean_x = outer_particle_positions.col(0).mean();
+  double mean_y = outer_particle_positions.col(1).mean();
+  Eigen::Matrix<double, num_outer_particle, 2> centered_positions = outer_particle_positions.matrix();
+  centered_positions.col(0).array() -= mean_x;
+  centered_positions.col(1).array() -= mean_y;
+
+  // 分散共分散行列の分散を計算
+  Eigen::Matrix2d cov = (centered_positions.transpose() * centered_positions) / num_outer_particle;
+  Eigen::SelfAdjointEigenSolver<Eigen::Matrix2d> solver(cov);
+  Eigen::Vector2d eigenvalues = solver.eigenvalues();
+
+  if (eigenvalues[0] == 0) {
+    return 1.0;
   } else {
-    return 0;
+    return std::sqrt(eigenvalues[1]) / std::sqrt(eigenvalues[0]);
   }
 }
 

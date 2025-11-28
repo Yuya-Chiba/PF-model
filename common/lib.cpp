@@ -5,6 +5,6 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <Eigen/Core>
+#include <Eigen/Dense>
 #include <opencv2/opencv.hpp>
 #include <filesystem>
