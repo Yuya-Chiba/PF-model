@@ -38,6 +38,9 @@ inline constexpr double q_hat_p = 1; // 外周ファイバー成長上限
 inline constexpr double q_h = 0.75; // 外周ファイバー成長式の解離定数
 inline constexpr double coop_xi = 20; // 外周ファイバー成長式の協同性
 
+// 接着脱離関連
+inline constexpr double q_threshold = 0.25; // 動径ファイバー太さ(接着斑大きさ)閾値, これを超えると仮足とみなす
+
 //　描画関連(modelの挙動に関係しない)
 inline constexpr double init_particle_radius = 2; // 粒子の初期大きさ(接着かどうかで変わる、変更予定)
 inline constexpr int max_step = 30000; // 最大シミュレーション時間

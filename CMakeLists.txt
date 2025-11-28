@@ -24,3 +24,6 @@ target_link_libraries(Check_init_position Common ${OpenCV_LIBS} Eigen3::Eigen)
 # step2: 初期値から平衡解までの軌跡を調べる
 add_executable(Check_solution_trajectory check_trajectory_step2.cpp)
 target_link_libraries(Check_solution_trajectory Common ${OpenCV_LIBS} Eigen3::Eigen)
+# option: area,AR算出と形態分類
+add_executable(Calc_parameter check_trajectory_option.cpp)
+target_link_libraries(Calc_parameter Common Eigen3::Eigen)
