@@ -11,8 +11,8 @@ std::string classify_mode(const Eigen::Array<double, num_radial_fiber, 1>& radia
 
 int main() {
 
-  std::ifstream input_file("../result/csv/equilibrium_solutions.csv"); // 入力用
-  std::ofstream output_file("../result/csv/equilibrium_solutions_mode.csv"); // 出力用
+  std::ifstream input_file("../csv/result/equilibrium_solutions.csv"); // 入力用
+  std::ofstream output_file("../csv/result/equilibrium_solutions_mode.csv"); // 出力用
   output_file << "pattern,area,aspect_ratio,mode\n";
   std::string line;
   std::getline(input_file, line); // 1行目はヘッダーのためスキップ

@@ -24,12 +24,12 @@ int main() {
   Drawer drawer;
   bool draw_flg = false;
   bool image_save_flg = false;
-  std::string image_folder_path = "../result/image";
+  std::string image_folder_path = "../image";
 
   // 入出力データ保存用設定
-  auto patterns = read_thickness_patterns_from_csv("./../source/thickness_patterns.csv"); // 太さパターン読み込み
-  std::filesystem::create_directories("../result/csv"); // フォルダ無い場合は作成
-  std::ofstream outputfile("../result/csv/solution_init.csv");
+  auto patterns = read_thickness_patterns_from_csv("./../csv/source/thickness_patterns.csv"); // 太さパターン読み込み
+  std::filesystem::create_directories("../csv/result"); // フォルダ無い場合は作成
+  std::ofstream outputfile("../csv/result/solution_init.csv");
   set_csv_header(outputfile); // 出力用ファイルヘッダー設定
 
   // 全2635パターンについてシミュレーションを回す

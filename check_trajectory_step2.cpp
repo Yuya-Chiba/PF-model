@@ -14,16 +14,15 @@ int main() {
   Drawer drawer;
   bool draw_flg = false;
   bool image_save_flg = false;
-  std::string image_folder_path = "../result/image";
+  std::string image_folder_path = "../image";
 
   // 入出力データ保存用設定
   std::vector<Eigen::Array<double, num_center_particle, 2>> init_cp_positions_vector;
   std::vector<Eigen::Array<double, num_outer_particle, 2>> init_op_positions_vector;
   std::vector<Eigen::Array<double, num_radial_fiber, 1>> init_rf_thicknesses_vector;
-  read_position_thickness_from_csv("../result/csv/solution_init.csv", init_cp_positions_vector, init_op_positions_vector, init_rf_thicknesses_vector);
-  std::filesystem::create_directories("../result/csv");
-  std::ofstream outputfile_trajectory("../result/csv/trajectory.csv");
-  std::ofstream outputfile_solutions("../result/csv/equilibrium_solutions.csv");
+  read_position_thickness_from_csv("../csv/result/solution_init.csv", init_cp_positions_vector, init_op_positions_vector, init_rf_thicknesses_vector);
+  std::ofstream outputfile_trajectory("../csv/result/trajectory.csv");
+  std::ofstream outputfile_solutions("../csv/result/equilibrium_solutions.csv");
   set_csv_header(outputfile_trajectory); // 出力用ファイルヘッダー設定
   set_csv_header(outputfile_solutions);
 
